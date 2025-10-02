@@ -1,0 +1,61 @@
+# Source files (only ship compiled dist/)
+src/
+!src/index.ts
+
+# Tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+coverage/
+tests/
+
+# Examples and demos
+examples/
+demos/
+
+# Configuration files
+tsconfig.json
+vitest.config.ts
+eslint.config.js
+.prettierrc.json
+.prettierignore
+
+# Development files
+.git/
+.gitignore
+.npmrc
+.npmignore
+.eslintcache
+
+# Documentation (keep README.md)
+*.md
+!README.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencies
+node_modules/
+
+# Build artifacts (keep dist/)
+*.tsbuildinfo
+
+# Misc
+.env
+.env.local
+.env.*.local

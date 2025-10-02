@@ -1,0 +1,89 @@
+{
+  "name": "usetime",
+  "version": "1.0.0",
+  "description": "A comprehensive collection of React hooks for time-based operations including intervals, timeouts, debouncing, throttling, stopwatches, retries, and more",
+  "keywords": [
+    "react",
+    "hooks",
+    "react-hooks",
+    "timer",
+    "interval",
+    "timeout",
+    "debounce",
+    "throttle",
+    "stopwatch",
+    "retry",
+    "typescript",
+    "time",
+    "delay",
+    "batched-updates",
+    "sequential-execution"
+  ],
+  "license": "MIT",
+  "author": "SkorpionG",
+  "homepage": "https://github.com/SkorpionG/useTime#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SkorpionG/useTime.git"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "validate": "npm run typecheck && npm run lint && npm run test:run",
+    "prepublishOnly": "npm run build && npm run validate"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@testing-library/jest-dom": "^6.9.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/eslint__js": "^8.42.3",
+    "@types/node": "^24.6.1",
+    "@types/react": "^18.3.25",
+    "@vitest/ui": "^3.2.4",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "happy-dom": "^19.0.2",
+    "jsdom": "^27.0.0",
+    "prettier": "^3.6.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.3.1",
+    "tsup": "8.5.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.45.0",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  }
+}
