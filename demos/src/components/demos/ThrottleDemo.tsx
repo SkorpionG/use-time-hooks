@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { useThrottle } from '../../../../src/useThrottle';
+import { useThrottle } from 'use-time-hooks';
 import { MousePointer2, Activity } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 
 export function ThrottleDemo() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -143,7 +143,7 @@ export function ThrottleDemo() {
               '<strong>Compare Counts:</strong> "Total Calls" shows every mouse move. "Throttled Calls" shows how many actually updated.',
               '<strong>See Efficiency:</strong> Throttling reduces calls by up to 90%, improving performance.',
               '<strong>Adjust Delay:</strong> Use the slider to change throttle timing (50ms = more updates, 500ms = fewer updates).',
-              '<strong>Reset & Test:</strong> Click "Reset Counters" to start fresh and try different delays.'
+              '<strong>Reset & Test:</strong> Click "Reset Counters" to start fresh and try different delays.',
             ]}
           />
 
@@ -153,7 +153,7 @@ export function ThrottleDemo() {
               '<strong>Guaranteed Execution:</strong> Unlike debounce, throttle ensures regular execution during continuous events',
               '<strong>Smooth Updates:</strong> Perfect for animations, scroll tracking, and real-time data',
               '<strong>Configurable Rate:</strong> Control how often updates occur (100ms for smooth, 500ms for efficiency)',
-              '<strong>Use Cases:</strong> Scroll handlers, resize events, mouse tracking, infinite scroll, game loops'
+              '<strong>Use Cases:</strong> Scroll handlers, resize events, mouse tracking, infinite scroll, game loops',
             ]}
           />
         </div>

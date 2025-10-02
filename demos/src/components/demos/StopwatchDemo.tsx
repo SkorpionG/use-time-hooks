@@ -1,10 +1,10 @@
-import { useStopwatch } from '../../../../src/useStopwatch';
+import { useStopwatch } from 'use-time-hooks';
 import { Button } from '../ui/button';
 import { DemoCard } from '../DemoCard';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 
 export function StopwatchDemo() {
   const {
@@ -115,7 +115,7 @@ function StopwatchExample() {
               '<strong>Record Laps:</strong> Click "Lap" while running to record split times without stopping.',
               '<strong>Stop & Resume:</strong> Click "Stop" to pause, then "Start" to resume from where you left off.',
               '<strong>View Lap Data:</strong> Each lap shows both the lap time (time for that lap) and split time (total time at that lap).',
-              '<strong>Reset:</strong> Click "Reset" to clear time, or "Clear Laps" to only clear lap records.'
+              '<strong>Reset:</strong> Click "Reset" to clear time, or "Clear Laps" to only clear lap records.',
             ]}
           />
 
@@ -125,7 +125,7 @@ function StopwatchExample() {
               '<strong>Lap Timing:</strong> Record unlimited laps with individual and cumulative times',
               '<strong>Pause/Resume:</strong> Full control without losing elapsed time',
               '<strong>Auto-formatted:</strong> Built-in time formatting (no manual conversion needed)',
-              '<strong>Use Cases:</strong> Sports timing, task tracking, performance monitoring, time trials, productivity apps'
+              '<strong>Use Cases:</strong> Sports timing, task tracking, performance monitoring, time trials, productivity apps',
             ]}
           />
         </div>

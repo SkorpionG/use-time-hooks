@@ -1,32 +1,32 @@
 import { useState } from 'react';
-import { useDelayedState } from '../../../../src/useDelayedState';
+import { useDelayedState } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { CheckCircle, Clock, Save, X } from 'lucide-react';
 
 export function DelayedStateDemo() {
   const [content, setContent] = useState('');
   const delayedState = useDelayedState('', 2000);
-  const { 
-    value: savedContent, 
+  const {
+    value: savedContent,
     immediateValue,
-    setValue: setSavedContent, 
-    isPending: isDelayed, 
-    setImmediate: flush, 
+    setValue: setSavedContent,
+    isPending: isDelayed,
+    setImmediate: flush,
     cancel,
-    timeRemaining 
+    timeRemaining,
   } = delayedState;
 
   const [notificationMessage, setNotificationMessage] = useState('');
   const notificationState = useDelayedState('', 1500);
-  const { 
-    value: delayedNotification, 
+  const {
+    value: delayedNotification,
     setValue: setDelayedNotification,
-    timeRemaining: notificationTimeRemaining 
+    timeRemaining: notificationTimeRemaining,
   } = notificationState;
 
   const handleContentChange = (value: string) => {
@@ -91,13 +91,13 @@ function AutoSaveEditor() {
         title="useDelayedState"
         description="Manage state with delayed updates, perfect for auto-save functionality and optimistic UI"
       />
-      
+
       <DemoCard>
         <div className="space-y-6">
           {/* Auto-Save Example */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Auto-Save Text Editor</h3>
-            
+
             <div className="space-y-2">
               <textarea
                 value={content}
@@ -105,24 +105,32 @@ function AutoSaveEditor() {
                 placeholder="Start typing... Content will auto-save after 2 seconds"
                 className="w-full h-32 p-3 border rounded-md resize-none"
               />
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
-                    {isDelayed && <Clock className="h-4 w-4 text-orange-500 animate-pulse" />}
-                    {isSaved && <CheckCircle className="h-4 w-4 text-green-500" />}
+                    {isDelayed && (
+                      <Clock className="h-4 w-4 text-orange-500 animate-pulse" />
+                    )}
+                    {isSaved && (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    )}
                     <span>
-                      Status: {' '}
+                      Status:{' '}
                       {isDelayed && (
                         <span className="text-orange-600">
                           Auto-saving in {(timeRemaining / 1000).toFixed(1)}s...
                         </span>
                       )}
-                      {isSaved && <span className="text-green-600">✅ Saved</span>}
-                      {hasUnsavedChanges && !isDelayed && <span className="text-red-600">❌ Unsaved changes</span>}
+                      {isSaved && (
+                        <span className="text-green-600">✅ Saved</span>
+                      )}
+                      {hasUnsavedChanges && !isDelayed && (
+                        <span className="text-red-600">❌ Unsaved changes</span>
+                      )}
                     </span>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     {hasUnsavedChanges && (
                       <Button onClick={handleSaveNow} size="sm">
@@ -131,21 +139,29 @@ function AutoSaveEditor() {
                       </Button>
                     )}
                     {isDelayed && (
-                      <Button onClick={handleCancelSave} variant="outline" size="sm">
+                      <Button
+                        onClick={handleCancelSave}
+                        variant="outline"
+                        size="sm"
+                      >
                         <X className="h-3 w-3 mr-1" />
                         Cancel
                       </Button>
                     )}
                   </div>
                 </div>
-                
+
                 {/* Show immediate vs delayed values */}
                 <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
-                  <div>Immediate value: "{immediateValue}" (updates instantly)</div>
-                  <div>Delayed value: "{savedContent}" (updates after 2s delay)</div>
+                  <div>
+                    Immediate value: "{immediateValue}" (updates instantly)
+                  </div>
+                  <div>
+                    Delayed value: "{savedContent}" (updates after 2s delay)
+                  </div>
                 </div>
               </div>
-              
+
               <div className="text-xs text-muted-foreground">
                 <div>Current: {content.length} characters</div>
                 <div>Saved: {savedContent.length} characters</div>
@@ -155,13 +171,13 @@ function AutoSaveEditor() {
 
           {/* Notification Example */}
           <div className="border-t pt-6">
-            <h3 className="text-lg font-semibold mb-4">Delayed Notifications</h3>
-            
+            <h3 className="text-lg font-semibold mb-4">
+              Delayed Notifications
+            </h3>
+
             <div className="space-y-4">
               <div className="flex gap-2">
-                <Button onClick={handleQuickAction}>
-                  Perform Action
-                </Button>
+                <Button onClick={handleQuickAction}>Perform Action</Button>
                 {notificationState.isPending && (
                   <Button onClick={handleCancelNotification} variant="outline">
                     Cancel Confirmation
@@ -177,16 +193,19 @@ function AutoSaveEditor() {
                     </div>
                   </div>
                 )}
-                
+
                 {delayedNotification && (
                   <div className="p-3 bg-green-50 border border-green-200 rounded-md text-green-800 dark:bg-green-950 dark:border-green-800 dark:text-green-200">
                     <div className="flex items-center gap-2">
-                      {notificationState.isPending && <Clock className="h-4 w-4 animate-pulse" />}
+                      {notificationState.isPending && (
+                        <Clock className="h-4 w-4 animate-pulse" />
+                      )}
                       <span>
                         Delayed: {delayedNotification}
                         {notificationState.isPending && (
                           <span className="ml-2 text-sm">
-                            (confirming in {(notificationTimeRemaining / 1000).toFixed(1)}s...)
+                            (confirming in{' '}
+                            {(notificationTimeRemaining / 1000).toFixed(1)}s...)
                           </span>
                         )}
                       </span>
@@ -203,7 +222,7 @@ function AutoSaveEditor() {
               '<strong>Watch the Delay:</strong> The "Saved Value" (green box) waits 2 seconds before updating. The countdown shows time remaining.',
               '<strong>Try Save Now:</strong> Click "Save Now" to bypass the delay and save immediately.',
               '<strong>Try Cancel:</strong> Make changes, then click "Cancel" to revert back to the last saved value.',
-              '<strong>Observe Pending State:</strong> The orange "Pending..." indicator shows when changes are waiting to be saved.'
+              '<strong>Observe Pending State:</strong> The orange "Pending..." indicator shows when changes are waiting to be saved.',
             ]}
           />
 
@@ -213,7 +232,7 @@ function AutoSaveEditor() {
               '<strong>Auto-save:</strong> Automatically commits changes after a delay period (great for draft saving)',
               '<strong>Manual Control:</strong> Save immediately or cancel pending changes at any time',
               '<strong>Countdown Timer:</strong> Visual feedback showing time until auto-save',
-              '<strong>Use Cases:</strong> Auto-saving forms, search inputs, draft editors, settings panels'
+              '<strong>Use Cases:</strong> Auto-saving forms, search inputs, draft editors, settings panels',
             ]}
           />
         </div>

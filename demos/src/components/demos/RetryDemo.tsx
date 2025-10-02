@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useRetry } from '../../../../src/useRetry';
+import { useRetry } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { RefreshCw, Clock, AlertCircle, CheckCircle } from 'lucide-react';
 
 export function RetryDemo() {
@@ -17,19 +17,22 @@ export function RetryDemo() {
   const apiCall = async (): Promise<string> => {
     const currentAttempt = callCount + 1;
     setCallCount(currentAttempt);
-    
+
     const timestamp = new Date().toLocaleTimeString();
-    setAttemptLog(prev => [...prev, `${timestamp} - Attempt #${currentAttempt}: Calling API...`]);
-    
+    setAttemptLog((prev) => [
+      ...prev,
+      `${timestamp} - Attempt #${currentAttempt}: Calling API...`,
+    ]);
+
     // 70% chance of failure to demonstrate retry logic
     if (Math.random() < 0.7) {
       const error = `API call failed (attempt ${currentAttempt})`;
-      setAttemptLog(prev => [...prev, `${timestamp} - ❌ ${error}`]);
+      setAttemptLog((prev) => [...prev, `${timestamp} - ❌ ${error}`]);
       throw new Error(error);
     }
-    
+
     const success = `✅ Success! Data retrieved on attempt ${currentAttempt}`;
-    setAttemptLog(prev => [...prev, `${timestamp} - ${success}`]);
+    setAttemptLog((prev) => [...prev, `${timestamp} - ${success}`]);
     return success;
   };
 
@@ -40,11 +43,17 @@ export function RetryDemo() {
     backoffMultiplier: 2,
     onRetry: (_error, attemptNumber, nextDelay) => {
       const timestamp = new Date().toLocaleTimeString();
-      setAttemptLog(prev => [...prev, `${timestamp} - 🔄 Retrying in ${nextDelay}ms (attempt ${attemptNumber})...`]);
+      setAttemptLog((prev) => [
+        ...prev,
+        `${timestamp} - 🔄 Retrying in ${nextDelay}ms (attempt ${attemptNumber})...`,
+      ]);
     },
     onMaxAttemptsReached: () => {
       const timestamp = new Date().toLocaleTimeString();
-      setAttemptLog(prev => [...prev, `${timestamp} - ⛔ All retries exhausted`]);
+      setAttemptLog((prev) => [
+        ...prev,
+        `${timestamp} - ⛔ All retries exhausted`,
+      ]);
     },
   });
 
@@ -106,37 +115,44 @@ function ApiRetryExample() {
         title="useRetry"
         description="Retry failed operations with exponential backoff and customizable retry logic"
       />
-      
+
       <DemoCard>
         <div className="space-y-6">
           {/* Status Display */}
           <div className="text-center p-6 border rounded-lg">
             <div className="flex items-center justify-center gap-2 mb-4">
-              {state.isRetrying && <RefreshCw className="h-5 w-5 animate-spin text-blue-500" />}
-              {state.lastError !== null && !state.isRetrying && <AlertCircle className="h-5 w-5 text-red-500" />}
-              {result && !state.isRetrying && <CheckCircle className="h-5 w-5 text-green-500" />}
+              {state.isRetrying && (
+                <RefreshCw className="h-5 w-5 animate-spin text-blue-500" />
+              )}
+              {state.lastError !== null && !state.isRetrying && (
+                <AlertCircle className="h-5 w-5 text-red-500" />
+              )}
+              {result && !state.isRetrying && (
+                <CheckCircle className="h-5 w-5 text-green-500" />
+              )}
               <span className="font-medium">
-                {state.isRetrying 
-                  ? `Retrying... (Attempt ${state.currentAttempt + 1})` 
-                  : state.lastError !== null 
-                    ? 'Failed' 
-                    : result 
-                      ? 'Success' 
+                {state.isRetrying
+                  ? `Retrying... (Attempt ${state.currentAttempt + 1})`
+                  : state.lastError !== null
+                    ? 'Failed'
+                    : result
+                      ? 'Success'
                       : 'Ready'}
               </span>
             </div>
-            
+
             {state.isRetrying && state.timeUntilNextRetry > 0 && (
               <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200">
                 <div className="flex items-center justify-center gap-2">
                   <Clock className="h-4 w-4 animate-pulse" />
                   <span className="text-sm">
-                    Next retry in {(state.timeUntilNextRetry / 1000).toFixed(1)} seconds
+                    Next retry in {(state.timeUntilNextRetry / 1000).toFixed(1)}{' '}
+                    seconds
                   </span>
                 </div>
               </div>
             )}
-            
+
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-muted-foreground">Total Attempts</div>
@@ -144,7 +160,9 @@ function ApiRetryExample() {
               </div>
               <div>
                 <div className="text-muted-foreground">Current Attempt</div>
-                <div className="text-2xl font-bold">{state.currentAttempt + 1}</div>
+                <div className="text-2xl font-bold">
+                  {state.currentAttempt + 1}
+                </div>
               </div>
             </div>
           </div>
@@ -154,7 +172,11 @@ function ApiRetryExample() {
             <Button onClick={handleExecute} disabled={state.isRetrying}>
               {state.isRetrying ? 'Retrying...' : 'Call API (70% fail rate)'}
             </Button>
-            <Button onClick={handleReset} variant="outline" disabled={state.isRetrying}>
+            <Button
+              onClick={handleReset}
+              variant="outline"
+              disabled={state.isRetrying}
+            >
               Reset
             </Button>
           </div>
@@ -166,10 +188,13 @@ function ApiRetryExample() {
                 {result}
               </div>
             )}
-            
+
             {state.lastError !== null && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-800 dark:bg-red-950 dark:border-red-800 dark:text-red-200">
-                ❌ {state.lastError instanceof Error ? state.lastError.message : String(state.lastError)}
+                ❌{' '}
+                {state.lastError instanceof Error
+                  ? state.lastError.message
+                  : String(state.lastError)}
               </div>
             )}
           </div>
@@ -179,10 +204,15 @@ function ApiRetryExample() {
             <h4 className="font-medium mb-3">Retry Activity Log</h4>
             <div className="space-y-1 max-h-48 overflow-y-auto">
               {attemptLog.length === 0 ? (
-                <div className="text-sm text-muted-foreground">Click "Call API" to see retry attempts in real-time</div>
+                <div className="text-sm text-muted-foreground">
+                  Click "Call API" to see retry attempts in real-time
+                </div>
               ) : (
                 attemptLog.map((log, index) => (
-                  <div key={index} className="text-xs font-mono text-muted-foreground">
+                  <div
+                    key={index}
+                    className="text-xs font-mono text-muted-foreground"
+                  >
                     {log}
                   </div>
                 ))
@@ -196,7 +226,7 @@ function ApiRetryExample() {
               '<strong>Watch Retries:</strong> If it fails, the hook automatically retries with exponential backoff (1s → 2s → 4s delays).',
               '<strong>Check Activity Log:</strong> See each attempt, failure, and retry in real-time with countdown timers.',
               '<strong>Try Cancel:</strong> Click "Cancel Retry" during a retry to stop the operation.',
-              '<strong>Try Reset:</strong> Click "Reset" to clear the state and start fresh.'
+              '<strong>Try Reset:</strong> Click "Reset" to clear the state and start fresh.',
             ]}
           />
 
@@ -206,7 +236,7 @@ function ApiRetryExample() {
               '<strong>Exponential Backoff:</strong> Delays increase between retries (1s → 2s → 4s) to avoid overwhelming servers',
               '<strong>Real-time Feedback:</strong> Countdown timer shows time until next retry attempt',
               '<strong>Full Control:</strong> Cancel ongoing retries or reset state at any time',
-              '<strong>Use Cases:</strong> API calls, network requests, database operations, file uploads'
+              '<strong>Use Cases:</strong> API calls, network requests, database operations, file uploads',
             ]}
           />
         </div>

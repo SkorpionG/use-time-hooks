@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useDebounce } from '../../../../src/useDebounce';
+import { useDebounce } from 'use-time-hooks';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { Search, Loader2 } from 'lucide-react';
 
 export function DebounceDemo() {
@@ -122,7 +122,7 @@ export function DebounceDemo() {
               '<strong>Watch Debouncing:</strong> The "Debounced" value waits for the delay period (default 500ms) before updating.',
               '<strong>See Results:</strong> Search results only appear after the debounced value updates, reducing unnecessary API calls.',
               '<strong>Adjust Delay:</strong> Use the slider to change the debounce delay and see how it affects behavior.',
-              '<strong>Notice Efficiency:</strong> Typing quickly only triggers one search instead of many.'
+              '<strong>Notice Efficiency:</strong> Typing quickly only triggers one search instead of many.',
             ]}
           />
 
@@ -132,7 +132,7 @@ export function DebounceDemo() {
               '<strong>Better UX:</strong> Prevents flickering results and reduces visual noise',
               '<strong>Configurable Delay:</strong> Adjust timing based on your use case (search: 300-500ms, validation: 500-1000ms)',
               '<strong>Simple API:</strong> Just wrap your value with useDebounce',
-              '<strong>Use Cases:</strong> Search inputs, form validation, auto-save, resize handlers, scroll events'
+              '<strong>Use Cases:</strong> Search inputs, form validation, auto-save, resize handlers, scroll events',
             ]}
           />
         </div>

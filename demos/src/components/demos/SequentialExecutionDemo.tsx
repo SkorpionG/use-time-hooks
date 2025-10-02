@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useSequentialExecution } from '../../../../src/useSequentialExecution';
+import { useSequentialExecution } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { Play, Square, RotateCcw, CheckCircle, Clock } from 'lucide-react';
 
 export function SequentialExecutionDemo() {
@@ -174,7 +174,8 @@ function SequentialApiCalls() {
                   </span>
                   {apiExecution.isRunning && apiExecution.timeRemaining > 0 && (
                     <span className="text-sm text-muted-foreground">
-                      (next step in {(apiExecution.timeRemaining / 1000).toFixed(1)}s)
+                      (next step in{' '}
+                      {(apiExecution.timeRemaining / 1000).toFixed(1)}s)
                     </span>
                   )}
                 </div>
@@ -184,8 +185,10 @@ function SequentialApiCalls() {
                     <div
                       key={index}
                       className={`h-2 flex-1 rounded transition-all ${
-                        index < apiExecution.currentStepIndex || 
-                        (index === apiExecution.currentStepIndex && apiExecution.cyclesCompleted > 0 && !apiExecution.isRunning)
+                        index < apiExecution.currentStepIndex ||
+                        (index === apiExecution.currentStepIndex &&
+                          apiExecution.cyclesCompleted > 0 &&
+                          !apiExecution.isRunning)
                           ? 'bg-green-500'
                           : index === apiExecution.currentStepIndex &&
                               apiExecution.isRunning
@@ -195,9 +198,10 @@ function SequentialApiCalls() {
                     />
                   ))}
                 </div>
-                
+
                 <div className="mt-2 text-xs text-muted-foreground">
-                  Current step: {apiExecution.currentStep?.id || 'None'} | Cycles completed: {apiExecution.cyclesCompleted}
+                  Current step: {apiExecution.currentStep?.id || 'None'} |
+                  Cycles completed: {apiExecution.cyclesCompleted}
                 </div>
               </div>
 
@@ -320,10 +324,13 @@ function SequentialApiCalls() {
                   <div className="flex items-center justify-center gap-2">
                     <Clock className="h-3 w-3 animate-pulse" />
                     <span>
-                      Animating box {animationExecution.currentStepIndex + 1} of 4
+                      Animating box {animationExecution.currentStepIndex + 1} of
+                      4
                       {animationExecution.timeRemaining > 0 && (
                         <span className="ml-1">
-                          (next in {(animationExecution.timeRemaining / 1000).toFixed(1)}s)
+                          (next in{' '}
+                          {(animationExecution.timeRemaining / 1000).toFixed(1)}
+                          s)
                         </span>
                       )}
                     </span>
@@ -343,7 +350,7 @@ function SequentialApiCalls() {
               '<strong>Watch Progress:</strong> The progress bar fills as each step completes, and the countdown shows time until the next step.',
               '<strong>Try Animations:</strong> Click "Start Animations" to see boxes light up sequentially every 0.5 seconds.',
               '<strong>Control Execution:</strong> Use Stop to pause mid-sequence, or Reset to start over.',
-              '<strong>Check Activity Log:</strong> See real-time updates of what\'s happening at each step.'
+              "<strong>Check Activity Log:</strong> See real-time updates of what's happening at each step.",
             ]}
           />
 
@@ -353,7 +360,7 @@ function SequentialApiCalls() {
               '<strong>Progress Tracking:</strong> Real-time progress bar and countdown timer for each step',
               '<strong>Flexible Control:</strong> Start, stop, or reset the sequence at any time',
               '<strong>Loop Support:</strong> Optionally loop the sequence (animations demo loops continuously)',
-              '<strong>Use Cases:</strong> Multi-step forms, API request chains, onboarding flows, sequential animations'
+              '<strong>Use Cases:</strong> Multi-step forms, API request chains, onboarding flows, sequential animations',
             ]}
           />
         </div>

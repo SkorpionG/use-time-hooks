@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useInterval } from '../../../../src/useInterval';
+import { useInterval } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { Play, Pause, RotateCcw, Clock } from 'lucide-react';
 
 export function IntervalDemo() {
@@ -94,7 +94,7 @@ export function IntervalDemo() {
               '<strong>Watch Execution Count:</strong> See how many times the interval callback has fired.',
               '<strong>Pause & Resume:</strong> Click "Pause" to stop, then "Start" to resume from where you left off.',
               '<strong>Reset:</strong> Click "Reset" to set everything back to zero.',
-              '<strong>Adjust Speed:</strong> Stop the timer and use the slider to change interval timing (100ms to 2000ms).'
+              '<strong>Adjust Speed:</strong> Stop the timer and use the slider to change interval timing (100ms to 2000ms).',
             ]}
           />
 
@@ -104,7 +104,7 @@ export function IntervalDemo() {
               '<strong>Pause/Resume:</strong> Full control to start, stop, and reset the interval',
               '<strong>Execution Tracking:</strong> Built-in counter shows how many times callback has run',
               '<strong>Dynamic Interval:</strong> Change timing on the fly',
-              '<strong>Use Cases:</strong> Polling APIs, auto-refresh, animations, countdowns, real-time updates'
+              '<strong>Use Cases:</strong> Polling APIs, auto-refresh, animations, countdowns, real-time updates',
             ]}
           />
         </div>

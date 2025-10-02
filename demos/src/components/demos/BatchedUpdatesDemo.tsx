@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { useBatchedUpdates } from '../../../../src/useBatchedUpdates';
+import { useBatchedUpdates } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { Zap, Clock, CheckCircle, Play, Pause } from 'lucide-react';
 
 export function BatchedUpdatesDemo() {
@@ -15,18 +15,26 @@ export function BatchedUpdatesDemo() {
   const [lastFlushSize, setLastFlushSize] = useState(0);
   const [isAutoMode, setIsAutoMode] = useState(false);
   const autoIntervalRef = useRef<number | null>(null);
-  
-  const { addUpdate: addBatchUpdate, batchSize, timeUntilFlush, clear: clearBatch } = useBatchedUpdates<() => void>(
+
+  const {
+    addUpdate: addBatchUpdate,
+    batchSize,
+    timeUntilFlush,
+    clear: clearBatch,
+  } = useBatchedUpdates<() => void>(
     (batchedUpdates) => {
       // Execute all batched update functions
       const timestamp = new Date().toLocaleTimeString();
       setLastFlushSize(batchedUpdates.length);
-      setUpdates(prev => [...prev.slice(-9), `${timestamp} - 🚀 Flushed ${batchedUpdates.length} batched updates`]);
-      batchedUpdates.forEach(fn => fn());
+      setUpdates((prev) => [
+        ...prev.slice(-9),
+        `${timestamp} - 🚀 Flushed ${batchedUpdates.length} batched updates`,
+      ]);
+      batchedUpdates.forEach((fn) => fn());
     },
-    { 
+    {
       batchWindow: 1000, // 1 second window for clearer demonstration
-      maxBatchSize: 10 
+      maxBatchSize: 10,
     }
   );
 
@@ -35,31 +43,31 @@ export function BatchedUpdatesDemo() {
   useEffect(() => {
     renderCountRef.current += 1;
     setRenderCount(renderCountRef.current);
-  });  
+  });
 
   const logUpdate = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
-    setUpdates(prev => [...prev.slice(-9), `${timestamp} - ${message}`]);
+    setUpdates((prev) => [...prev.slice(-9), `${timestamp} - ${message}`]);
   };
 
   const handleSingleUpdate = () => {
-    setCount(prev => prev + 1);
+    setCount((prev) => prev + 1);
     logUpdate('Single update');
   };
 
   const handleBatchedUpdates = () => {
     addBatchUpdate(() => {
-      setCount(prev => prev + 1);
+      setCount((prev) => prev + 1);
       logUpdate('Batched update 1');
     });
-    
+
     addBatchUpdate(() => {
-      setCount(prev => prev + 1);
+      setCount((prev) => prev + 1);
       logUpdate('Batched update 2');
     });
-    
+
     addBatchUpdate(() => {
-      setCount(prev => prev + 1);
+      setCount((prev) => prev + 1);
       logUpdate('Batched update 3');
     });
   };
@@ -67,7 +75,7 @@ export function BatchedUpdatesDemo() {
   const handleRapidUpdates = () => {
     for (let i = 0; i < 5; i++) {
       addBatchUpdate(() => {
-        setCount(prev => prev + 1);
+        setCount((prev) => prev + 1);
         logUpdate(`Rapid update ${i + 1}`);
       });
     }
@@ -77,7 +85,7 @@ export function BatchedUpdatesDemo() {
     setIsAutoMode(true);
     const intervalId = setInterval(() => {
       addBatchUpdate(() => {
-        setCount(prev => prev + 1);
+        setCount((prev) => prev + 1);
         logUpdate('Auto-generated update');
       });
     }, 300);
@@ -107,7 +115,7 @@ export function BatchedUpdatesDemo() {
       autoIntervalRef.current = null;
     }
     setIsAutoMode(false);
-    
+
     // Clear batch and reset state
     clearBatch();
     setCount(0);
@@ -156,7 +164,7 @@ function BatchedCounter() {
         title="useBatchedUpdates"
         description="Batch multiple state updates together to improve performance and reduce re-renders"
       />
-      
+
       <DemoCard>
         <div className="space-y-6">
           {/* Mode Indicator */}
@@ -190,7 +198,9 @@ function BatchedCounter() {
             <div className="text-center">
               <div className="flex items-center justify-center gap-1">
                 <div className="text-2xl font-bold">{batchSize}</div>
-                {batchSize > 0 && <Clock className="h-4 w-4 text-orange-500 animate-pulse" />}
+                {batchSize > 0 && (
+                  <Clock className="h-4 w-4 text-orange-500 animate-pulse" />
+                )}
               </div>
               <div className="text-sm text-muted-foreground">Pending</div>
             </div>
@@ -208,7 +218,8 @@ function BatchedCounter() {
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 animate-pulse" />
                 <span className="font-medium">
-                  {batchSize} update{batchSize > 1 ? 's' : ''} queued - will flush in {(timeUntilFlush / 1000).toFixed(1)} seconds
+                  {batchSize} update{batchSize > 1 ? 's' : ''} queued - will
+                  flush in {(timeUntilFlush / 1000).toFixed(1)} seconds
                 </span>
               </div>
             </div>
@@ -219,7 +230,8 @@ function BatchedCounter() {
               <div className="flex items-center gap-2">
                 <CheckCircle className="h-4 w-4" />
                 <span className="font-medium">
-                  Last batch: {lastFlushSize} update{lastFlushSize > 1 ? 's' : ''} flushed successfully
+                  Last batch: {lastFlushSize} update
+                  {lastFlushSize > 1 ? 's' : ''} flushed successfully
                 </span>
               </div>
             </div>
@@ -229,14 +241,23 @@ function BatchedCounter() {
           <div className="space-y-3">
             <div className="text-sm text-center text-muted-foreground mb-2">
               {isAutoMode ? (
-                <span className="text-orange-600 font-medium">🔄 Auto mode active - generating updates every 300ms</span>
+                <span className="text-orange-600 font-medium">
+                  🔄 Auto mode active - generating updates every 300ms
+                </span>
               ) : (
-                <span>Click buttons below to add updates and watch them batch together</span>
+                <span>
+                  Click buttons below to add updates and watch them batch
+                  together
+                </span>
               )}
             </div>
-            
+
             <div className="flex gap-2 justify-center flex-wrap">
-              <Button onClick={handleSingleUpdate} variant="outline" disabled={isAutoMode}>
+              <Button
+                onClick={handleSingleUpdate}
+                variant="outline"
+                disabled={isAutoMode}
+              >
                 +1 Single Update
               </Button>
               <Button onClick={handleBatchedUpdates} disabled={isAutoMode}>
@@ -248,11 +269,11 @@ function BatchedCounter() {
                 +5 Rapid Updates
               </Button>
             </div>
-            
+
             <div className="flex gap-2 justify-center">
-              <Button 
+              <Button
                 onClick={handleToggleAutoMode}
-                variant={isAutoMode ? "default" : "outline"}
+                variant={isAutoMode ? 'default' : 'outline'}
                 size="sm"
               >
                 {isAutoMode ? (
@@ -278,10 +299,15 @@ function BatchedCounter() {
             <h4 className="font-medium mb-3">Recent Updates</h4>
             <div className="space-y-1 max-h-32 overflow-y-auto">
               {updates.length === 0 ? (
-                <div className="text-sm text-muted-foreground">No updates yet</div>
+                <div className="text-sm text-muted-foreground">
+                  No updates yet
+                </div>
               ) : (
                 updates.map((update, index) => (
-                  <div key={index} className="text-xs font-mono text-muted-foreground">
+                  <div
+                    key={index}
+                    className="text-xs font-mono text-muted-foreground"
+                  >
                     {update}
                   </div>
                 ))
@@ -294,7 +320,7 @@ function BatchedCounter() {
               '<strong>Try Manual Mode First:</strong> Click "+3 Batched Updates" and watch the "Pending" counter. Updates queue for 1 second, then flush together.',
               '<strong>Compare with Single Updates:</strong> Click "+1 Single Update" 3 times. Notice the render count increases by 3 (one per update).',
               '<strong>Enable Auto Mode:</strong> Click "Start Auto Mode" to see continuous batching in action. Updates generate every 300ms but batch together.',
-              '<strong>Watch the Metrics:</strong> <ul class="ml-6 mt-1 space-y-1 list-disc"><li><strong>Pending:</strong> Updates waiting to flush</li><li><strong>Flush In:</strong> Countdown to next batch flush</li><li><strong>Render Count:</strong> Total component re-renders</li></ul>'
+              '<strong>Watch the Metrics:</strong> <ul class="ml-6 mt-1 space-y-1 list-disc"><li><strong>Pending:</strong> Updates waiting to flush</li><li><strong>Flush In:</strong> Countdown to next batch flush</li><li><strong>Render Count:</strong> Total component re-renders</li></ul>',
             ]}
           />
 
@@ -304,7 +330,7 @@ function BatchedCounter() {
               '<strong>Reduced Re-renders:</strong> 3 batched updates = 1 render vs 3 single updates = 3 renders',
               '<strong>Better Performance:</strong> Fewer renders = smoother UI, especially with frequent updates',
               '<strong>Configurable Window:</strong> Adjust batch window (1 second here) based on your needs',
-              '<strong>Automatic Flushing:</strong> Updates flush automatically after the batch window expires'
+              '<strong>Automatic Flushing:</strong> Updates flush automatically after the batch window expires',
             ]}
           />
         </div>

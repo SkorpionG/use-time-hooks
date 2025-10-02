@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useTimeout } from '../../../../src/useTimeout';
+import { useTimeout } from 'use-time-hooks';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { CodeExample } from '../CodeExample';
 import { DemoHeader } from '../DemoHeader';
 import { DemoCard } from '../DemoCard';
-import { DemoInstructions } from './DemoInstructions';
-import { DemoFeatures } from './DemoFeatures';
+import { DemoInstructions } from '../DemoInstructions';
+import { DemoFeatures } from '../DemoFeatures';
 import { Play, RotateCcw, X, Timer } from 'lucide-react';
 
 export function TimeoutDemo() {
@@ -110,7 +110,7 @@ export function TimeoutDemo() {
               '<strong>Watch Countdown:</strong> The timer shows remaining time in seconds with real-time updates.',
               '<strong>Try Pause:</strong> Click "Pause" to stop the countdown. Click "Start" again to resume.',
               '<strong>Try Reset:</strong> Click "Reset" to clear everything and return to initial state.',
-              '<strong>Adjust Delay:</strong> Use the slider to change the timeout duration (1-10 seconds).'
+              '<strong>Adjust Delay:</strong> Use the slider to change the timeout duration (1-10 seconds).',
             ]}
           />
 
@@ -120,7 +120,7 @@ export function TimeoutDemo() {
               '<strong>Full Control:</strong> Start, pause, and reset the timeout at any time',
               '<strong>Real-time Countdown:</strong> See exactly how much time remains',
               '<strong>Auto Cleanup:</strong> Automatically clears timeouts on unmount',
-              '<strong>Use Cases:</strong> Delayed notifications, auto-logout, tooltips, temporary messages, timed actions'
+              '<strong>Use Cases:</strong> Delayed notifications, auto-logout, tooltips, temporary messages, timed actions',
             ]}
           />
         </div>
