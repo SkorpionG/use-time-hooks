@@ -41,9 +41,9 @@ export function InstallationSection() {
   const [copied, setCopied] = useState(false);
 
   const installCommands: Record<PackageManager, string> = {
-    npm: 'npm install usetime',
-    yarn: 'yarn add usetime',
-    pnpm: 'pnpm add usetime',
+    npm: 'npm install use-time-hooks',
+    yarn: 'yarn add use-time-hooks',
+    pnpm: 'pnpm add use-time-hooks',
   };
 
   const handleCopy = async (text: string) => {

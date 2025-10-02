@@ -1,5 +1,5 @@
-import { useRetry } from 'usetime';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useRetry } from 'use-time-hooks';
 
 /**
  * Example: API call with retry logic

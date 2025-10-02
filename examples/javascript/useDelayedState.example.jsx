@@ -1,5 +1,5 @@
-import { useDelayedState } from 'usetime';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useDelayedState } from 'use-time-hooks';
 
 /**
  * Example: Delayed notification

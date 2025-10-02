@@ -35,7 +35,7 @@ function App() {
           <div className="mb-4 flex items-center justify-center gap-3">
             <Clock className="h-12 w-12 text-sky-600 dark:text-sky-400" />
             <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-sky-600 via-cyan-600 to-rose-600 bg-clip-text text-transparent dark:from-sky-400 dark:via-cyan-400 dark:to-rose-400">
-              useTime
+              use-time-hooks
             </h1>
           </div>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
@@ -45,7 +45,7 @@ function App() {
           </p>
           <div className="mt-6 flex items-center justify-center gap-4">
             <a
-              href="https://github.com/SkorpionG/useTime"
+              href="https://github.com/SkorpionG/use-time-hooks"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -55,7 +55,7 @@ function App() {
             </a>
             <span className="text-muted-foreground">•</span>
             <a
-              href="https://www.npmjs.com/package/usetime"
+              href="https://www.npmjs.com/package/use-time-hooks"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"

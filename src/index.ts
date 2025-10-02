@@ -1,5 +1,5 @@
 /**
- * useTime - A collection of React hooks for time-based function execution
+ * use-time-hooks - A collection of React hooks for time-based function execution
  *
  * This library provides a set of React hooks that simplify common time-based
  * patterns in React applications, including intervals, timeouts, debouncing,

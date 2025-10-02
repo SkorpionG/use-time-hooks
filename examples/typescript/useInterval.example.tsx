@@ -1,5 +1,5 @@
-import { useInterval } from 'usetime';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useInterval } from 'use-time-hooks';
 
 /**
  * Example: Simple counter using useInterval

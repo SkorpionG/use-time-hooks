@@ -139,7 +139,7 @@ export function DebounceDemo() {
       </DemoCard>
 
       <CodeExample
-        code={`import { useDebounce } from 'usetime';
+        code={`import { useDebounce } from 'use-time-hooks';
 
 function SearchInput() {
   const [searchTerm, setSearchTerm] = useState('');

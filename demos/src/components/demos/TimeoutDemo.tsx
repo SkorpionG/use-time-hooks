@@ -127,7 +127,7 @@ export function TimeoutDemo() {
       </DemoCard>
 
       <CodeExample
-        code={`import { useTimeout } from 'usetime';
+        code={`import { useTimeout } from 'use-time-hooks';
 
 function DelayedMessage() {
   const [message, setMessage] = useState('');

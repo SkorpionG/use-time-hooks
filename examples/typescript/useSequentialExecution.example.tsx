@@ -1,5 +1,5 @@
-import { useSequentialExecution, ExecutionStep } from 'usetime';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useSequentialExecution, ExecutionStep } from 'use-time-hooks';
 
 /**
  * Example: Sequential API calls

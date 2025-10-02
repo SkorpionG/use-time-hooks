@@ -106,7 +106,7 @@ export function SequentialExecutionDemo() {
     animationExecution.reset();
   };
 
-  const exampleCode = `import { useSequentialExecution } from 'usetime';
+  const exampleCode = `import { useSequentialExecution } from 'use-time-hooks';
 
 function SequentialApiCalls() {
   const [results, setResults] = useState([]);

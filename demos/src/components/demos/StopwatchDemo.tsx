@@ -18,7 +18,7 @@ export function StopwatchDemo() {
     formattedTime,
   } = useStopwatch();
 
-  const exampleCode = `import { useStopwatch } from 'usetime';
+  const exampleCode = `import { useStopwatch } from 'use-time-hooks';
 
 function StopwatchExample() {
   const {

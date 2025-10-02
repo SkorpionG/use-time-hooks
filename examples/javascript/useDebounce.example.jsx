@@ -1,5 +1,5 @@
-import { useDebounce } from 'usetime';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDebounce } from 'use-time-hooks';
 
 /**
  * Example: Search input with debouncing

@@ -1,4 +1,5 @@
-import { useStopwatch } from 'usetime';
+import React from 'react';
+import { useStopwatch } from 'use-time-hooks';
 
 /**
  * Example: Basic stopwatch

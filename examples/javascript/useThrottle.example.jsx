@@ -1,5 +1,5 @@
-import { useThrottle } from 'usetime';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useThrottle } from 'use-time-hooks';
 
 /**
  * Example: Scroll position tracker

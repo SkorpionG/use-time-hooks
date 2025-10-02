@@ -59,7 +59,7 @@ export function DelayedStateDemo() {
   const isSaved = content === savedContent && !isDelayed;
   const hasUnsavedChanges = content !== savedContent || isDelayed;
 
-  const exampleCode = `import { useDelayedState } from 'usetime';
+  const exampleCode = `import { useDelayedState } from 'use-time-hooks';
 
 function AutoSaveEditor() {
   const [content, setContent] = useState('');

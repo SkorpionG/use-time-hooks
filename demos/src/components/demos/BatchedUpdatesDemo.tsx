@@ -126,7 +126,7 @@ export function BatchedUpdatesDemo() {
     };
   }, []);
 
-  const exampleCode = `import { useBatchedUpdates } from 'usetime';
+  const exampleCode = `import { useBatchedUpdates } from 'use-time-hooks';
 
 function BatchedCounter() {
   const [count, setCount] = useState(0);

@@ -160,7 +160,7 @@ export function ThrottleDemo() {
       </DemoCard>
 
       <CodeExample
-        code={`import { useThrottle } from 'usetime';
+        code={`import { useThrottle } from 'use-time-hooks';
 
 function ScrollTracker() {
   const [scrollY, setScrollY] = useState(0);

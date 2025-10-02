@@ -1,5 +1,5 @@
 {
-  "name": "usetime",
+  "name": "use-time-hooks",
   "version": "1.0.0",
   "description": "A comprehensive collection of React hooks for time-based operations including intervals, timeouts, debouncing, throttling, stopwatches, retries, and more",
   "keywords": [
@@ -21,10 +21,10 @@
   ],
   "license": "MIT",
   "author": "SkorpionG",
-  "homepage": "https://github.com/SkorpionG/useTime#readme",
+  "homepage": "https://github.com/SkorpionG/use-time-hooks#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SkorpionG/useTime.git"
+    "url": "https://github.com/SkorpionG/use-time-hooks.git"
   },
   "type": "module",
   "main": "./dist/index.js",

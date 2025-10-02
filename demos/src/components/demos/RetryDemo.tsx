@@ -65,7 +65,7 @@ export function RetryDemo() {
     reset();
   };
 
-  const exampleCode = `import { useRetry } from 'usetime';
+  const exampleCode = `import { useRetry } from 'use-time-hooks';
 
 function ApiRetryExample() {
   const [result, setResult] = useState('');

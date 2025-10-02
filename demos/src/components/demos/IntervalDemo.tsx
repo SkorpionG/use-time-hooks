@@ -111,7 +111,7 @@ export function IntervalDemo() {
       </DemoCard>
 
       <CodeExample
-        code={`import { useInterval } from 'usetime';
+        code={`import { useInterval } from 'use-time-hooks';
 
 function Timer() {
   const [count, setCount] = useState(0);

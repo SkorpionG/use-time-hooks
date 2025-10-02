@@ -1,6 +1,6 @@
-# useTime Examples
+# use-time-hooks Examples
 
-This directory contains practical examples for each hook in the useTime library, organized by language.
+This directory contains practical examples for each hook in the use-time-hooks library, organized by language.
 
 ## Folder Structure
 

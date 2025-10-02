@@ -1,10 +1,10 @@
-# useTime
+# use-time-hooks
 
 > A comprehensive collection of React hooks for time-based operations
 
 A powerful, TypeScript-first library providing several production-ready React hooks for managing time-based operations, including intervals, timeouts, debouncing, throttling, stopwatches, retries, and more.
 
-[![npm version](https://img.shields.io/npm/v/usetime.svg)](https://www.npmjs.com/package/usetime)
+[![npm version](https://img.shields.io/npm/v/use-time-hooks.svg)](https://www.npmjs.com/package/use-time-hooks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
@@ -30,15 +30,15 @@ A powerful, TypeScript-first library providing several production-ready React ho
 ## Installation
 
 ```bash
-npm install usetime
+npm install use-time-hooks
 ```
 
 ```bash
-yarn add usetime
+yarn add use-time-hooks
 ```
 
 ```bash
-pnpm add usetime
+pnpm add use-time-hooks
 ```
 
 ## Features
@@ -64,7 +64,7 @@ pnpm add usetime
 Execute a callback function at specified intervals with manual control.
 
 ```tsx
-import { useInterval } from 'usetime';
+import { useInterval } from 'use-time-hooks';
 import { useState } from 'react';
 
 function Timer() {
@@ -111,7 +111,7 @@ function Timer() {
 Execute a callback function after a specified delay with full control and real-time progress tracking.
 
 ```tsx
-import { useTimeout } from 'usetime';
+import { useTimeout } from 'use-time-hooks';
 import { useState } from 'react';
 
 function DelayedMessage() {
@@ -159,7 +159,7 @@ function DelayedMessage() {
 Debounce a value, delaying updates until after the specified delay.
 
 ```tsx
-import { useDebounce } from 'usetime';
+import { useDebounce } from 'use-time-hooks';
 import { useState, useEffect } from 'react';
 
 function SearchInput() {
@@ -198,7 +198,7 @@ function SearchInput() {
 Throttle a function, ensuring it's called at most once per specified delay.
 
 ```tsx
-import { useThrottle } from 'usetime';
+import { useThrottle } from 'use-time-hooks';
 import { useState, useEffect } from 'react';
 
 function ScrollTracker() {
@@ -231,7 +231,7 @@ function ScrollTracker() {
 A full-featured stopwatch with lap timing capabilities and formatted time display.
 
 ```tsx
-import { useStopwatch } from 'usetime';
+import { useStopwatch } from 'use-time-hooks';
 
 function StopwatchDemo() {
   const {
@@ -295,7 +295,7 @@ function StopwatchDemo() {
 Retry failed async operations with exponential backoff and customizable retry logic.
 
 ```tsx
-import { useRetry } from 'usetime';
+import { useRetry } from 'use-time-hooks';
 import { useState } from 'react';
 
 function DataFetcher() {
@@ -386,7 +386,7 @@ function DataFetcher() {
 Batch multiple updates over time to reduce re-renders and improve performance.
 
 ```tsx
-import { useBatchedUpdates } from 'usetime';
+import { useBatchedUpdates } from 'use-time-hooks';
 import { useState } from 'react';
 
 function BatchedUpdatesDemo() {
@@ -468,7 +468,7 @@ function BatchedUpdatesDemo() {
 State with delayed updates, useful for optimistic UI updates or debouncing state changes.
 
 ```tsx
-import { useDelayedState } from 'usetime';
+import { useDelayedState } from 'use-time-hooks';
 import { useState } from 'react';
 
 function DelayedStateDemo() {
@@ -534,7 +534,7 @@ function DelayedStateDemo() {
 Execute an array of functions sequentially with specified delays between each execution.
 
 ```tsx
-import { useSequentialExecution, ExecutionStep } from 'usetime';
+import { useSequentialExecution, ExecutionStep } from 'use-time-hooks';
 import { useState } from 'react';
 
 function SequentialDemo() {
@@ -702,13 +702,13 @@ import type {
   LapTime,
   ExecutionStep,
   RetryState
-} from 'usetime';
+} from 'use-time-hooks';
 ```
 
 ## Quick Start
 
 ```tsx
-import { useInterval, useDebounce, useTimeout } from 'usetime';
+import { useInterval, useDebounce, useTimeout } from 'use-time-hooks';
 import { useState } from 'react';
 
 function App() {

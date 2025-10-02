@@ -1,74 +1,59 @@
-import { useRetry } from 'usetime';
-import { useState } from 'react';
-
+import React, { useState } from 'react';
+import { useRetry } from 'use-time-hooks';
 /**
  * Example: API call with retry logic
- * 
+ *
  * Demonstrates retrying a failed API call with exponential backoff.
  */
 export function ApiRetryExample() {
   const [result, setResult] = useState<string>('');
   const [callCount, setCallCount] = useState(0);
 
-  // Simulate an API call that fails randomly
-  const apiCall = async (): Promise<string> => {
-    setCallCount(prev => prev + 1);
-    
-    // 70% chance of failure to demonstrate retry logic
-    if (Math.random() < 0.7) {
-      throw new Error(`API call failed (attempt ${callCount + 1})`);
-    }
-    
-    return `Success! Data retrieved on attempt ${callCount + 1}`;
-  };
-
-  const { execute, isLoading, error, retryCount, reset } = useRetry(
-    apiCall,
+  const { execute, cancel, reset, state } = useRetry<string>(
+    async () => {
+      setCallCount((c) => c + 1);
+      if (callCount < 2) {
+        throw new Error(`Attempt ${callCount + 1} failed`);
+      }
+      return `Success on attempt ${callCount + 1}`;
+    },
     {
-      maxRetries: 3,
-      delay: 1000,
-      exponentialBackoff: true,
-      onSuccess: (data) => setResult(data),
-      onError: (err) => console.log('Retry failed:', err.message),
+      maxAttempts: 3,
+      initialDelay: 200,
+      backoffMultiplier: 2,
     }
   );
 
-  const handleReset = () => {
+  const handleExecute = async () => {
     setResult('');
     setCallCount(0);
-    reset();
+    try {
+      const res = await execute();
+      setResult(res);
+    } catch (e) {
+      // error is already in state.lastError
+    }
   };
 
   return (
     <div>
       <h2>API Retry Example</h2>
-      <p>This simulates an API call with 70% failure rate</p>
-      
-      <div>
-        <button onClick={execute} disabled={isLoading}>
-          {isLoading ? 'Retrying...' : 'Call API'}
-        </button>
-        <button onClick={handleReset} disabled={isLoading}>
-          Reset
-        </button>
-      </div>
+      <button onClick={handleExecute} disabled={state.isRetrying}>
+        {state.isRetrying ? 'Retrying...' : 'Start Retry'}
+      </button>
+      <button onClick={cancel} disabled={!state.isRetrying}>
+        Cancel
+      </button>
 
-      <div>
-        <p>Total attempts: {callCount}</p>
-        <p>Retry count: {retryCount}</p>
-        <p>Status: {isLoading ? 'Loading...' : 'Idle'}</p>
-        
-        {result && (
-          <div style={{ color: 'green' }}>
-            <strong>✅ {result}</strong>
-          </div>
+      <div style={{ marginTop: '10px' }}>
+        <p>Status: {state.isRetrying ? 'Retrying' : 'Idle'}</p>
+        {result && <p style={{ color: 'green' }}>Result: {result}</p>}
+        {state.lastError && !result && (
+          <p style={{ color: 'red' }}>
+            Error: {(state.lastError as Error).message}
+          </p>
         )}
-        
-        {error && (
-          <div style={{ color: 'red' }}>
-            <strong>❌ {error.message}</strong>
-          </div>
-        )}
+        <p>Attempt: {state.currentAttempt}</p>
       </div>
     </div>
   );
@@ -76,54 +61,49 @@ export function ApiRetryExample() {
 
 /**
  * Example: File upload with retry
- * 
- * Shows how to retry file uploads with custom retry logic.
+ *
+ * Simulates a file upload that might fail and retries upon failure.
  */
 export function FileUploadRetryExample() {
-  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [uploadResult, setUploadResult] = useState('');
 
-  const uploadFile = async (): Promise<string> => {
-    // Simulate file upload that might fail
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (Math.random() < 0.5) {
-      throw new Error('Network error during upload');
-    }
-    
-    return 'File uploaded successfully!';
-  };
-
-  const { execute, isLoading, error, retryCount } = useRetry(
-    uploadFile,
+  const { execute, state } = useRetry<string>(
+    async (file: File) => {
+      if (Math.random() > 0.5) {
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+      return `Uploaded ${file.name} successfully`;
+    },
     {
-      maxRetries: 5,
-      delay: 2000,
-      exponentialBackoff: false, // Fixed delay
-      onSuccess: (message) => setUploadStatus(message),
+      maxAttempts: 2,
+      initialDelay: 500,
     }
   );
+
+  const handleUpload = () => {
+    setUploadResult('');
+    const file = new File(['content'], 'example.txt', { type: 'text/plain' });
+    execute(file as never)
+      .then(setUploadResult)
+      .catch(() => {});
+  };
 
   return (
     <div>
       <h2>File Upload Retry Example</h2>
-      
-      <button onClick={execute} disabled={isLoading}>
-        {isLoading ? `Uploading... (attempt ${retryCount + 1})` : 'Upload File'}
+      <button onClick={handleUpload} disabled={state.isRetrying}>
+        {state.isRetrying ? 'Uploading...' : 'Upload File'}
       </button>
 
-      <div>
-        <p>Retry attempts: {retryCount}/5</p>
-        
-        {uploadStatus && (
-          <div style={{ color: 'green' }}>
-            <strong>✅ {uploadStatus}</strong>
-          </div>
+      <div style={{ marginTop: '10px' }}>
+        {state.isRetrying && (
+          <p>Uploading, attempt {state.currentAttempt + 1}...</p>
         )}
-        
-        {error && (
-          <div style={{ color: 'red' }}>
-            <strong>❌ Upload failed: {error.message}</strong>
-          </div>
+        {uploadResult && <p style={{ color: 'green' }}>{uploadResult}</p>}
+        {state.lastError && !uploadResult && (
+          <p style={{ color: 'red' }}>
+            Error: {(state.lastError as Error).message}
+          </p>
         )}
       </div>
     </div>

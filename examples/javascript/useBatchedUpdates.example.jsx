@@ -1,5 +1,5 @@
-import { useBatchedUpdates } from 'usetime';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useBatchedUpdates } from 'use-time-hooks';
 
 /**
  * Example: Batched counter updates
