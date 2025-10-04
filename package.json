@@ -1,6 +1,6 @@
 {
   "name": "use-time-hooks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A comprehensive collection of React hooks for time-based operations including intervals, timeouts, debouncing, throttling, stopwatches, retries, and more",
   "keywords": [
     "react",
