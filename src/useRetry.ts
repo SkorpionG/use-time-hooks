@@ -146,17 +146,7 @@ export function useRetry<T>(
 ): UseRetryReturn<T> {
   const opts = useMemo(
     () => ({ ...DEFAULT_OPTIONS, ...options }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      options.maxAttempts,
-      options.initialDelay,
-      options.backoffMultiplier,
-      options.maxDelay,
-      options.useExponentialBackoff,
-      options.shouldRetry,
-      options.onRetry,
-      options.onMaxAttemptsReached,
-    ]
+    [options]
   );
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

@@ -173,35 +173,27 @@ export function useBatchedUpdates<T>(
   onBatchFlush: (batchedUpdates: T[]) => void,
   options: BatchedUpdatesOptions = {}
 ): UseBatchedUpdatesReturn<T> {
-  const opts = useMemo(
-    () => ({ ...DEFAULT_OPTIONS, ...options }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      options.batchWindow,
-      options.maxBatchSize,
-      options.flushOnFirst,
-      options.reducer,
-      options.onFlush,
-    ]
-  );
+  const opts = useMemo(() => ({ ...DEFAULT_OPTIONS, ...options }), [options]);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const isFirstUpdateRef = useRef<boolean>(true);
   const onBatchFlushRef = useRef(onBatchFlush);
+  const optsRef = useRef(opts);
 
   const [pendingUpdates, setPendingUpdates] = useState<T[]>([]);
   const [timeUntilFlush, setTimeUntilFlush] = useState<number>(0);
 
-  // Keep ref updated
+  // Keep refs updated
   useEffect(() => {
     onBatchFlushRef.current = onBatchFlush;
-  }, [onBatchFlush]);
+    optsRef.current = opts;
+  }, [onBatchFlush, opts]);
 
   const batchSize = pendingUpdates.length;
   const hasPendingUpdates = batchSize > 0;
-  
+
   // Use ref to track if we have pending updates
   const hasPendingUpdatesRef = useRef(hasPendingUpdates);
   useEffect(() => {
@@ -257,7 +249,7 @@ export function useBatchedUpdates<T>(
 
       isFirstUpdateRef.current = true;
       hasPendingUpdatesRef.current = false;
-      
+
       return [];
     });
   }, [opts, clearTimers]);
@@ -338,15 +330,19 @@ export function useBatchedUpdates<T>(
     pendingUpdatesRef.current = pendingUpdates;
   }, [pendingUpdates]);
 
+  // Auto-flush on unmount - intentionally empty deps to only run on unmount
   useEffect(() => {
     return () => {
       if (pendingUpdatesRef.current.length > 0) {
-        opts.onFlush<T>(pendingUpdatesRef.current, pendingUpdatesRef.current.length);
+        optsRef.current.onFlush<T>(
+          pendingUpdatesRef.current,
+          pendingUpdatesRef.current.length
+        );
         onBatchFlushRef.current(pendingUpdatesRef.current);
         hasPendingUpdatesRef.current = false;
       }
     };
-  }, [opts]);
+  }, []);
 
   return {
     addUpdate,

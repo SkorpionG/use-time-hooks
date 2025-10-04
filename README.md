@@ -784,6 +784,10 @@ This library works with React 16.8+ (hooks support required) and supports all mo
 
 MIT © [SkorpionG](https://github.com/SkorpionG)
 
+## Repository
+
+[https://github.com/SkorpionG/use-time-hooks](https://github.com/SkorpionG/use-time-hooks)
+
 ## Author
 
 Created with ❤️ by [SkorpionG](https://github.com/SkorpionG)

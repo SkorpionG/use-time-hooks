@@ -24,7 +24,10 @@
   "homepage": "https://github.com/SkorpionG/use-time-hooks#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SkorpionG/use-time-hooks.git"
+    "url": "git+https://github.com/SkorpionG/use-time-hooks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SkorpionG/use-time-hooks/issues"
   },
   "type": "module",
   "main": "./dist/index.js",
@@ -60,18 +63,18 @@
     "react": ">=16.8.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
-    "@testing-library/jest-dom": "^6.9.0",
+    "@eslint/js": "^9.37.0",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/eslint__js": "^8.42.3",
-    "@types/node": "^24.6.1",
+    "@types/eslint__js": "^9.14.0",
+    "@types/node": "^24.6.2",
     "@types/react": "^18.3.25",
     "@vitest/ui": "^3.2.4",
-    "eslint": "^9.36.0",
+    "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "^6.1.1",
     "happy-dom": "^19.0.2",
     "jsdom": "^27.0.0",
     "prettier": "^3.6.2",
