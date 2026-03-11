@@ -1,6 +1,9 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { useSequentialExecution, ExecutionStep } from '../src/useSequentialExecution';
+import {
+  useSequentialExecution,
+  ExecutionStep,
+} from '../src/useSequentialExecution';
 
 describe('useSequentialExecution', () => {
   it('should throw error with empty steps array', () => {
@@ -11,7 +14,7 @@ describe('useSequentialExecution', () => {
 
   it('should initialize with correct default values', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -25,10 +28,12 @@ describe('useSequentialExecution', () => {
 
   it('should auto-start when autoStart is true', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
-    const { result } = renderHook(() => useSequentialExecution(steps, true, true));
+    const { result } = renderHook(() =>
+      useSequentialExecution(steps, true, true)
+    );
 
     // Auto-start should set isRunning to true
     expect(result.current.isRunning).toBe(true);
@@ -37,7 +42,7 @@ describe('useSequentialExecution', () => {
 
   it('should start and stop execution correctly', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -64,7 +69,7 @@ describe('useSequentialExecution', () => {
 
   it('should toggle between start and stop', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -95,7 +100,7 @@ describe('useSequentialExecution', () => {
     const steps: ExecutionStep[] = [
       { fn: mockFn1, timeout: 100, id: 'step1' },
       { fn: mockFn2, timeout: 200, id: 'step2' },
-      { fn: mockFn3, timeout: 150, id: 'step3' }
+      { fn: mockFn3, timeout: 150, id: 'step3' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -136,7 +141,7 @@ describe('useSequentialExecution', () => {
 
     const steps: ExecutionStep[] = [
       { fn: mockFn1, timeout: 100, id: 'step1' },
-      { fn: mockFn2, timeout: 200, id: 'step2' }
+      { fn: mockFn2, timeout: 200, id: 'step2' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps, false));
@@ -166,7 +171,7 @@ describe('useSequentialExecution', () => {
   it('should reset to initial state', () => {
     const steps: ExecutionStep[] = [
       { fn: vi.fn(), timeout: 100, id: 'step1' },
-      { fn: vi.fn(), timeout: 200, id: 'step2' }
+      { fn: vi.fn(), timeout: 200, id: 'step2' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -196,7 +201,7 @@ describe('useSequentialExecution', () => {
   it('should handle async functions', async () => {
     const asyncFn = vi.fn().mockResolvedValue('success');
     const steps: ExecutionStep[] = [
-      { fn: asyncFn, timeout: 100, id: 'asyncStep' }
+      { fn: asyncFn, timeout: 100, id: 'asyncStep' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -219,7 +224,7 @@ describe('useSequentialExecution', () => {
     });
 
     const steps: ExecutionStep[] = [
-      { fn: errorFn, timeout: 100, id: 'errorStep' }
+      { fn: errorFn, timeout: 100, id: 'errorStep' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -233,14 +238,17 @@ describe('useSequentialExecution', () => {
     });
 
     expect(errorFn).toHaveBeenCalledTimes(1);
-    expect(consoleSpy).toHaveBeenCalledWith('Error executing step 0:', expect.any(Error));
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Error executing step 0:',
+      expect.any(Error)
+    );
 
     consoleSpy.mockRestore();
   });
 
   it('should update time remaining correctly', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));
@@ -263,7 +271,7 @@ describe('useSequentialExecution', () => {
 
   it('should cleanup timeouts on unmount', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result, unmount } = renderHook(() => useSequentialExecution(steps));
@@ -284,7 +292,7 @@ describe('useSequentialExecution', () => {
 
   it('should not start if already running', () => {
     const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' }
+      { fn: vi.fn(), timeout: 1000, id: 'step1' },
     ];
 
     const { result } = renderHook(() => useSequentialExecution(steps));

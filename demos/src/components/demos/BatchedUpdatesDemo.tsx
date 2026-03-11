@@ -10,11 +10,12 @@ import { Zap, Clock, CheckCircle, Play, Pause } from 'lucide-react';
 
 export function BatchedUpdatesDemo() {
   const [count, setCount] = useState(0);
-  const [renderCount, setRenderCount] = useState(0);
   const [updates, setUpdates] = useState<string[]>([]);
   const [lastFlushSize, setLastFlushSize] = useState(0);
   const [isAutoMode, setIsAutoMode] = useState(false);
   const autoIntervalRef = useRef<number | null>(null);
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
 
   const {
     addUpdate: addBatchUpdate,
@@ -37,13 +38,6 @@ export function BatchedUpdatesDemo() {
       maxBatchSize: 10,
     }
   );
-
-  // Track renders - intentionally no deps to count every render
-  const renderCountRef = useRef(0);
-  useEffect(() => {
-    renderCountRef.current += 1;
-    setRenderCount(renderCountRef.current);
-  });
 
   const logUpdate = (message: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -119,7 +113,6 @@ export function BatchedUpdatesDemo() {
     // Clear batch and reset state
     clearBatch();
     setCount(0);
-    setRenderCount(0);
     setUpdates([]);
     setLastFlushSize(0);
     renderCountRef.current = 0;
@@ -192,7 +185,7 @@ function BatchedCounter() {
               <div className="text-sm text-muted-foreground">Count</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold">{renderCount}</div>
+              <div className="text-2xl font-bold">{renderCountRef.current}</div>
               <div className="text-sm text-muted-foreground">Renders</div>
             </div>
             <div className="text-center">

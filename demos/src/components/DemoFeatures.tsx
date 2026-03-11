@@ -6,7 +6,10 @@ interface DemoFeaturesProps {
 /**
  * Reusable component for "Key Features" or "Key Benefits" sections
  */
-export function DemoFeatures({ title = "💡 Key Features:", features }: DemoFeaturesProps) {
+export function DemoFeatures({
+  title = '💡 Key Features:',
+  features,
+}: DemoFeaturesProps) {
   return (
     <div className="text-sm text-muted-foreground p-4 bg-muted rounded-lg">
       <p className="font-medium mb-2">{title}</p>

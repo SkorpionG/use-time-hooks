@@ -644,7 +644,7 @@ const fetchUser = async (): Promise<UserData> => {
 };
 
 const { execute, state } = useRetry<UserData>(fetchUser, {
-  maxAttempts: 3
+  maxAttempts: 3,
 });
 
 // execute() returns Promise<UserData>
@@ -659,11 +659,9 @@ interface LogEntry {
   message: string;
 }
 
-const { addUpdate } = useBatchedUpdates<LogEntry>(
-  (entries) => {
-    console.log('Batch:', entries);
-  }
-);
+const { addUpdate } = useBatchedUpdates<LogEntry>((entries) => {
+  console.log('Batch:', entries);
+});
 
 // addUpdate expects LogEntry type
 addUpdate({ timestamp: Date.now(), message: 'Hello' });
@@ -691,7 +689,7 @@ console.log(value.email);
 All hooks export their return type interfaces for advanced usage:
 
 ```typescript
-import type { 
+import type {
   UseIntervalReturn,
   UseTimeoutReturn,
   UseStopwatchReturn,
@@ -701,7 +699,7 @@ import type {
   UseSequentialExecutionReturn,
   LapTime,
   ExecutionStep,
-  RetryState
+  RetryState,
 } from 'use-time-hooks';
 ```
 

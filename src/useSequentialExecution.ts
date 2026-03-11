@@ -142,7 +142,7 @@ export function useSequentialExecution(
   // Use refs to avoid dependency issues
   const stepsRef = useRef(steps);
   const loopRef = useRef(loop);
-  
+
   useEffect(() => {
     stepsRef.current = steps;
     loopRef.current = loop;
@@ -154,13 +154,11 @@ export function useSequentialExecution(
     const step = currentSteps[stepIndex];
     if (!step) return;
 
-    
     try {
       await step.fn();
     } catch (error) {
       console.error(`Error executing step ${stepIndex}:`, error);
     }
-
 
     // Move to next step or complete cycle
     const nextIndex = stepIndex + 1;
@@ -214,7 +212,7 @@ export function useSequentialExecution(
 
     setIsRunning(true);
     setCurrentStepIndex(0);
-    
+
     const step = stepsRef.current[0];
     if (!step) return;
 
@@ -225,7 +223,6 @@ export function useSequentialExecution(
     timeoutRef.current = setTimeout(() => {
       void executeAndScheduleNext(0);
     }, step.timeout);
-    
   }, [executeAndScheduleNext]);
 
   // Stop function
@@ -261,7 +258,6 @@ export function useSequentialExecution(
     }
   }, [isRunning, start, stop]);
 
-
   // Auto-start on mount if enabled - run once
   useEffect(() => {
     if (autoStart && !isRunningRef.current && !timeoutRef.current) {
@@ -270,7 +266,7 @@ export function useSequentialExecution(
 
       setIsRunning(true);
       setCurrentStepIndex(0);
-      
+
       startTimeRef.current = Date.now();
       currentTimeoutRef.current = step.timeout;
       setTimeRemaining(step.timeout);

@@ -47,7 +47,7 @@ export function useInterval(
   delay: number,
   immediate: boolean = false
 ): UseIntervalReturn {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<(() => void) | undefined>(undefined);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [executionCount, setExecutionCount] = useState(0);

@@ -35,22 +35,22 @@ examples/
 
 Each example is available in both TypeScript and JavaScript versions:
 
-| Hook                      | TypeScript                                               | JavaScript                                               | Description                         |
-| ------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------- |
-| **useInterval**           | [.tsx](./typescript/useInterval.example.tsx)            | [.jsx](./javascript/useInterval.example.jsx)            | Counter and timer examples          |
-| **useTimeout**            | [.tsx](./typescript/useTimeout.example.tsx)             | [.jsx](./javascript/useTimeout.example.jsx)             | Delayed notifications with controls |
-| **useDebounce**           | [.tsx](./typescript/useDebounce.example.tsx)            | [.jsx](./javascript/useDebounce.example.jsx)            | Search input and form validation    |
-| **useThrottle**           | [.tsx](./typescript/useThrottle.example.tsx)            | [.jsx](./javascript/useThrottle.example.jsx)            | Scroll tracking and resize handling |
-| **useStopwatch**          | [.tsx](./typescript/useStopwatch.example.tsx)           | [.jsx](./javascript/useStopwatch.example.jsx)           | Basic stopwatch and lap timing      |
+| Hook             | TypeScript                                    | JavaScript                                    | Description                         |
+| ---------------- | --------------------------------------------- | --------------------------------------------- | ----------------------------------- |
+| **useInterval**  | [.tsx](./typescript/useInterval.example.tsx)  | [.jsx](./javascript/useInterval.example.jsx)  | Counter and timer examples          |
+| **useTimeout**   | [.tsx](./typescript/useTimeout.example.tsx)   | [.jsx](./javascript/useTimeout.example.jsx)   | Delayed notifications with controls |
+| **useDebounce**  | [.tsx](./typescript/useDebounce.example.tsx)  | [.jsx](./javascript/useDebounce.example.jsx)  | Search input and form validation    |
+| **useThrottle**  | [.tsx](./typescript/useThrottle.example.tsx)  | [.jsx](./javascript/useThrottle.example.jsx)  | Scroll tracking and resize handling |
+| **useStopwatch** | [.tsx](./typescript/useStopwatch.example.tsx) | [.jsx](./javascript/useStopwatch.example.jsx) | Basic stopwatch and lap timing      |
 
 ### Advanced Hooks
 
-| Hook                      | TypeScript                                               | JavaScript                                               | Description                         |
-| ------------------------- | -------------------------------------------------------- | -------------------------------------------------------- | ----------------------------------- |
-| **useRetry**              | [.tsx](./typescript/useRetry.example.tsx)               | [.jsx](./javascript/useRetry.example.jsx)               | Retry failed operations with exponential backoff |
-| **useBatchedUpdates**     | [.tsx](./typescript/useBatchedUpdates.example.tsx)      | [.jsx](./javascript/useBatchedUpdates.example.jsx)      | Batch multiple updates for performance |
-| **useDelayedState**       | [.tsx](./typescript/useDelayedState.example.tsx)        | [.jsx](./javascript/useDelayedState.example.jsx)        | State with delayed updates and optimistic UI |
-| **useSequentialExecution** | [.tsx](./typescript/useSequentialExecution.example.tsx) | [.jsx](./javascript/useSequentialExecution.example.jsx) | Execute functions sequentially with control |
+| Hook                       | TypeScript                                              | JavaScript                                              | Description                                      |
+| -------------------------- | ------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------ |
+| **useRetry**               | [.tsx](./typescript/useRetry.example.tsx)               | [.jsx](./javascript/useRetry.example.jsx)               | Retry failed operations with exponential backoff |
+| **useBatchedUpdates**      | [.tsx](./typescript/useBatchedUpdates.example.tsx)      | [.jsx](./javascript/useBatchedUpdates.example.jsx)      | Batch multiple updates for performance           |
+| **useDelayedState**        | [.tsx](./typescript/useDelayedState.example.tsx)        | [.jsx](./javascript/useDelayedState.example.jsx)        | State with delayed updates and optimistic UI     |
+| **useSequentialExecution** | [.tsx](./typescript/useSequentialExecution.example.tsx) | [.jsx](./javascript/useSequentialExecution.example.jsx) | Execute functions sequentially with control      |
 
 ## Language Versions
 

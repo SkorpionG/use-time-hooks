@@ -6,7 +6,10 @@ import { ThemeProvider } from './components/ThemeProvider';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="system" storageKey="use-time-hooks-demos-theme">
+    <ThemeProvider
+      defaultTheme="system"
+      storageKey="use-time-hooks-demos-theme"
+    >
       <App />
     </ThemeProvider>
   </StrictMode>

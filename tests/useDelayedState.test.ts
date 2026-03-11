@@ -227,10 +227,10 @@ describe('useDelayedState', () => {
 
   it('should handle different data types', () => {
     const { result: numberResult } = renderHook(() => useDelayedState(42, 100));
-    const { result: objectResult } = renderHook(() => 
+    const { result: objectResult } = renderHook(() =>
       useDelayedState({ name: 'test' }, 100)
     );
-    const { result: arrayResult } = renderHook(() => 
+    const { result: arrayResult } = renderHook(() =>
       useDelayedState([1, 2, 3], 100)
     );
 
@@ -279,7 +279,9 @@ describe('useDelayedState', () => {
   });
 
   it('should cleanup timers on unmount', () => {
-    const { result, unmount } = renderHook(() => useDelayedState('initial', 1000));
+    const { result, unmount } = renderHook(() =>
+      useDelayedState('initial', 1000)
+    );
 
     act(() => {
       result.current.setValue('updated');

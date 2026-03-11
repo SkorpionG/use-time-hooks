@@ -16,9 +16,11 @@ describe('useBatchedUpdates', () => {
 
   it('should batch updates and flush after batch window', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 100,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 100,
+      })
+    );
 
     // Add multiple updates
     act(() => {
@@ -27,7 +29,11 @@ describe('useBatchedUpdates', () => {
       result.current.addUpdate('update3');
     });
 
-    expect(result.current.pendingUpdates).toEqual(['update1', 'update2', 'update3']);
+    expect(result.current.pendingUpdates).toEqual([
+      'update1',
+      'update2',
+      'update3',
+    ]);
     expect(result.current.batchSize).toBe(3);
     expect(result.current.hasPendingUpdates).toBe(true);
     expect(mockFlush).not.toHaveBeenCalled();
@@ -45,10 +51,12 @@ describe('useBatchedUpdates', () => {
 
   it('should flush immediately when max batch size is reached', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      maxBatchSize: 3,
-      batchWindow: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        maxBatchSize: 3,
+        batchWindow: 1000,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -74,10 +82,12 @@ describe('useBatchedUpdates', () => {
 
   it('should flush immediately on first update when flushOnFirst is true', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      flushOnFirst: true,
-      batchWindow: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        flushOnFirst: true,
+        batchWindow: 1000,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('first-update');
@@ -103,9 +113,11 @@ describe('useBatchedUpdates', () => {
 
   it('should manually flush pending updates', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 1000,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -159,13 +171,17 @@ describe('useBatchedUpdates', () => {
     const mockFlush = vi.fn();
     const customReducer = vi.fn((accumulated, newUpdate) => {
       // Custom logic: only keep unique updates
-      return accumulated.includes(newUpdate) ? accumulated : [...accumulated, newUpdate];
+      return accumulated.includes(newUpdate)
+        ? accumulated
+        : [...accumulated, newUpdate];
     });
 
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      reducer: customReducer,
-      batchWindow: 100,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        reducer: customReducer,
+        batchWindow: 100,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -187,10 +203,12 @@ describe('useBatchedUpdates', () => {
     const mockFlush = vi.fn();
     const onFlush = vi.fn();
 
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      onFlush,
-      batchWindow: 100,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        onFlush,
+        batchWindow: 100,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -207,9 +225,11 @@ describe('useBatchedUpdates', () => {
 
   it('should update timeUntilFlush countdown', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 1000,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -237,9 +257,11 @@ describe('useBatchedUpdates', () => {
 
   it('should handle different data types', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 100,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 100,
+      })
+    );
 
     act(() => {
       result.current.addUpdate({ id: 1, name: 'test' });
@@ -262,9 +284,11 @@ describe('useBatchedUpdates', () => {
 
   it('should reset first update flag after flush', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      flushOnFirst: true,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        flushOnFirst: true,
+      })
+    );
 
     // First update should flush immediately
     act(() => {
@@ -312,9 +336,11 @@ describe('useBatchedUpdates', () => {
 
   it('should cancel scheduled flush when manually flushed', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 1000,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -340,9 +366,11 @@ describe('useBatchedUpdates', () => {
 
   it('should restart batch window for new updates after flush', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 500,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 500,
+      })
+    );
 
     // First batch
     act(() => {
@@ -365,16 +393,21 @@ describe('useBatchedUpdates', () => {
       vi.advanceTimersByTime(500);
     });
 
-    expect(mockFlush).toHaveBeenCalledWith(['batch2-update1', 'batch2-update2']);
+    expect(mockFlush).toHaveBeenCalledWith([
+      'batch2-update1',
+      'batch2-update2',
+    ]);
     expect(mockFlush).toHaveBeenCalledTimes(2);
   });
 
   it('should handle rapid successive updates', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 100,
-      maxBatchSize: 10,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 100,
+        maxBatchSize: 10,
+      })
+    );
 
     // Add many updates rapidly
     act(() => {
@@ -440,9 +473,11 @@ describe('useBatchedUpdates', () => {
 
   it('should handle edge case of zero batch window', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 0,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 0,
+      })
+    );
 
     act(() => {
       result.current.addUpdate('update1');
@@ -457,9 +492,11 @@ describe('useBatchedUpdates', () => {
 
   it('should handle multiple flushes correctly', () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      batchWindow: 100,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        batchWindow: 100,
+      })
+    );
 
     // First batch
     act(() => {
@@ -482,15 +519,20 @@ describe('useBatchedUpdates', () => {
       vi.advanceTimersByTime(100);
     });
 
-    expect(mockFlush).toHaveBeenCalledWith(['second-batch-1', 'second-batch-2']);
+    expect(mockFlush).toHaveBeenCalledWith([
+      'second-batch-1',
+      'second-batch-2',
+    ]);
     expect(mockFlush).toHaveBeenCalledTimes(2);
   });
 
   it('should maintain correct state after clear operation', async () => {
     const mockFlush = vi.fn();
-    const { result } = renderHook(() => useBatchedUpdates(mockFlush, {
-      flushOnFirst: true,
-    }));
+    const { result } = renderHook(() =>
+      useBatchedUpdates(mockFlush, {
+        flushOnFirst: true,
+      })
+    );
 
     // Add update (should flush immediately due to flushOnFirst)
     act(() => {

@@ -48,7 +48,7 @@ export function useTimeout(
   delay: number,
   autoStart: boolean = true
 ): UseTimeoutReturn {
-  const savedCallback = useRef<() => void>();
+  const savedCallback = useRef<(() => void) | undefined>(undefined);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const remainingTimeRef = useRef<number>(delay);

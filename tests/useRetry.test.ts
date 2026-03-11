@@ -38,18 +38,20 @@ describe('useRetry', () => {
       .mockRejectedValueOnce(new Error('First failure'))
       .mockResolvedValueOnce('success');
 
-    const { result } = renderHook(() => useRetry(mockOperation, {
-      maxAttempts: 2,
-      initialDelay: 100,
-    }));
+    const { result } = renderHook(() =>
+      useRetry(mockOperation, {
+        maxAttempts: 2,
+        initialDelay: 100,
+      })
+    );
 
     let executeResult;
     await act(async () => {
       const promise = result.current.execute();
-      
+
       // Advance timers to trigger retry
       await vi.advanceTimersByTimeAsync(100);
-      
+
       executeResult = await promise;
     });
 
@@ -64,11 +66,13 @@ describe('useRetry', () => {
     const mockOperation = vi.fn().mockRejectedValue(error);
     const onMaxAttemptsReached = vi.fn();
 
-    const { result } = renderHook(() => useRetry(mockOperation, {
-      maxAttempts: 2,
-      initialDelay: 100,
-      onMaxAttemptsReached,
-    }));
+    const { result } = renderHook(() =>
+      useRetry(mockOperation, {
+        maxAttempts: 2,
+        initialDelay: 100,
+        onMaxAttemptsReached,
+      })
+    );
 
     let caughtError;
     await act(async () => {
@@ -76,13 +80,13 @@ describe('useRetry', () => {
         caughtError = e;
         return e; // Return instead of throwing to prevent unhandled rejection
       });
-      
+
       // Advance timers for first retry
       await vi.advanceTimersByTimeAsync(100);
-      
+
       // Advance timers for second retry
       await vi.advanceTimersByTimeAsync(200); // Exponential backoff: 100 * 2
-      
+
       await promise;
     });
 
@@ -96,16 +100,18 @@ describe('useRetry', () => {
   it('should cancel ongoing retry operation', async () => {
     const mockOperation = vi.fn().mockRejectedValue(new Error('Failure'));
 
-    const { result } = renderHook(() => useRetry(mockOperation, {
-      maxAttempts: 3,
-      initialDelay: 1000,
-    }));
+    const { result } = renderHook(() =>
+      useRetry(mockOperation, {
+        maxAttempts: 3,
+        initialDelay: 1000,
+      })
+    );
 
     await act(async () => {
       // Execute and catch the rejection to prevent unhandled error
       result.current.execute().catch(() => {});
     });
-    
+
     // Cancel before first retry completes
     act(() => {
       result.current.cancel();
@@ -118,10 +124,12 @@ describe('useRetry', () => {
   it('should reset state correctly', async () => {
     const mockOperation = vi.fn().mockRejectedValue(new Error('Failure'));
 
-    const { result } = renderHook(() => useRetry(mockOperation, {
-      maxAttempts: 2,
-      initialDelay: 100,
-    }));
+    const { result } = renderHook(() =>
+      useRetry(mockOperation, {
+        maxAttempts: 2,
+        initialDelay: 100,
+      })
+    );
 
     // Execute operation to change state
     await act(async () => {

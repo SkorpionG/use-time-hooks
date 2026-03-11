@@ -144,10 +144,7 @@ export function useRetry<T>(
   operation: (...args: never[]) => Promise<T>,
   options: RetryOptions = {}
 ): UseRetryReturn<T> {
-  const opts = useMemo(
-    () => ({ ...DEFAULT_OPTIONS, ...options }),
-    [options]
-  );
+  const opts = useMemo(() => ({ ...DEFAULT_OPTIONS, ...options }), [options]);
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);

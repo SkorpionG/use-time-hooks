@@ -72,37 +72,74 @@ function App() {
             Interactive Examples
           </h2>
           <p className="text-center text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Explore live demonstrations of each hook. Click on any tab to see the hook in action.
+            Explore live demonstrations of each hook. Click on any tab to see
+            the hook in action.
           </p>
 
           <ResponsiveTabs
             defaultValue="interval"
             tabs={[
-            { value: 'interval', label: 'useInterval', icon: <Clock className="h-4 w-4" /> },
-            { value: 'timeout', label: 'useTimeout', icon: <Timer className="h-4 w-4" /> },
-            { value: 'debounce', label: 'useDebounce', icon: <Search className="h-4 w-4" /> },
-            { value: 'throttle', label: 'useThrottle', icon: <Activity className="h-4 w-4" /> },
-            { value: 'stopwatch', label: 'useStopwatch', icon: <TimerReset className="h-4 w-4" /> },
-            { value: 'retry', label: 'useRetry', icon: <RefreshCw className="h-4 w-4" /> },
-            { value: 'batched', label: 'useBatchedUpdates', icon: <Zap className="h-4 w-4" /> },
-            { value: 'delayed', label: 'useDelayedState', icon: <Save className="h-4 w-4" /> },
-            { value: 'sequential', label: 'useSequentialExecution', icon: <PlayCircle className="h-4 w-4" /> },
-          ]}
-        >
-          {(activeTab) => (
-            <>
-              {activeTab === 'interval' && <IntervalDemo />}
-              {activeTab === 'timeout' && <TimeoutDemo />}
-              {activeTab === 'debounce' && <DebounceDemo />}
-              {activeTab === 'throttle' && <ThrottleDemo />}
-              {activeTab === 'stopwatch' && <StopwatchDemo />}
-              {activeTab === 'retry' && <RetryDemo />}
-              {activeTab === 'batched' && <BatchedUpdatesDemo />}
-              {activeTab === 'delayed' && <DelayedStateDemo />}
-              {activeTab === 'sequential' && <SequentialExecutionDemo />}
-            </>
-          )}
-        </ResponsiveTabs>
+              {
+                value: 'interval',
+                label: 'useInterval',
+                icon: <Clock className="h-4 w-4" />,
+              },
+              {
+                value: 'timeout',
+                label: 'useTimeout',
+                icon: <Timer className="h-4 w-4" />,
+              },
+              {
+                value: 'debounce',
+                label: 'useDebounce',
+                icon: <Search className="h-4 w-4" />,
+              },
+              {
+                value: 'throttle',
+                label: 'useThrottle',
+                icon: <Activity className="h-4 w-4" />,
+              },
+              {
+                value: 'stopwatch',
+                label: 'useStopwatch',
+                icon: <TimerReset className="h-4 w-4" />,
+              },
+              {
+                value: 'retry',
+                label: 'useRetry',
+                icon: <RefreshCw className="h-4 w-4" />,
+              },
+              {
+                value: 'batched',
+                label: 'useBatchedUpdates',
+                icon: <Zap className="h-4 w-4" />,
+              },
+              {
+                value: 'delayed',
+                label: 'useDelayedState',
+                icon: <Save className="h-4 w-4" />,
+              },
+              {
+                value: 'sequential',
+                label: 'useSequentialExecution',
+                icon: <PlayCircle className="h-4 w-4" />,
+              },
+            ]}
+          >
+            {(activeTab) => (
+              <>
+                {activeTab === 'interval' && <IntervalDemo />}
+                {activeTab === 'timeout' && <TimeoutDemo />}
+                {activeTab === 'debounce' && <DebounceDemo />}
+                {activeTab === 'throttle' && <ThrottleDemo />}
+                {activeTab === 'stopwatch' && <StopwatchDemo />}
+                {activeTab === 'retry' && <RetryDemo />}
+                {activeTab === 'batched' && <BatchedUpdatesDemo />}
+                {activeTab === 'delayed' && <DelayedStateDemo />}
+                {activeTab === 'sequential' && <SequentialExecutionDemo />}
+              </>
+            )}
+          </ResponsiveTabs>
         </section>
 
         <footer className="mt-16 border-t pt-8 text-center text-sm text-muted-foreground">
