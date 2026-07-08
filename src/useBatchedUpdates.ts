@@ -181,6 +181,10 @@ export function useBatchedUpdates<T>(
   const isFirstUpdateRef = useRef<boolean>(true);
   const onBatchFlushRef = useRef(onBatchFlush);
   const optsRef = useRef(opts);
+  // Synchronous source of truth for the current batch, kept in lock-step with the
+  // `pendingUpdates` state. Flush decisions read this instead of running side
+  // effects inside a setState updater (which React may invoke twice).
+  const pendingRef = useRef<T[]>([]);
 
   const [pendingUpdates, setPendingUpdates] = useState<T[]>([]);
   const [timeUntilFlush, setTimeUntilFlush] = useState<number>(0);
@@ -201,18 +205,21 @@ export function useBatchedUpdates<T>(
   }, [hasPendingUpdates]);
 
   // Update countdown timer - stable function using refs
-  const updateCountdown = useCallback(() => {
-    if (!hasPendingUpdatesRef.current) return;
+  const updateCountdown = useCallback(
+    function updateCountdown() {
+      if (!hasPendingUpdatesRef.current) return;
 
-    const elapsed = Date.now() - startTimeRef.current;
-    const remaining = Math.max(0, opts.batchWindow - elapsed);
+      const elapsed = Date.now() - startTimeRef.current;
+      const remaining = Math.max(0, opts.batchWindow - elapsed);
 
-    setTimeUntilFlush(remaining);
+      setTimeUntilFlush(remaining);
 
-    if (remaining > 0) {
-      countdownRef.current = setTimeout(updateCountdown, 50);
-    }
-  }, [opts.batchWindow]);
+      if (remaining > 0) {
+        countdownRef.current = setTimeout(updateCountdown, 50);
+      }
+    },
+    [opts.batchWindow]
+  );
 
   // Start countdown
   const startCountdown = useCallback(() => {
@@ -233,26 +240,37 @@ export function useBatchedUpdates<T>(
     }
   }, []);
 
-  // Flush all pending updates - use functional setState to avoid dependency
+  // Flush the current batch. Reads the synchronous ref so no side effects run
+  // inside a setState updater.
   const flush = useCallback(() => {
-    setPendingUpdates((currentUpdates) => {
-      if (currentUpdates.length === 0) return currentUpdates;
+    const updatesToFlush = pendingRef.current;
+    if (updatesToFlush.length === 0) return;
 
+    clearTimers();
+    pendingRef.current = [];
+    setPendingUpdates([]);
+    setTimeUntilFlush(0);
+    isFirstUpdateRef.current = true;
+    hasPendingUpdatesRef.current = false;
+
+    optsRef.current.onFlush<T>(updatesToFlush, updatesToFlush.length);
+    onBatchFlushRef.current(updatesToFlush);
+  }, [clearTimers]);
+
+  // Immediately flush a specific set of updates (first-update / max-size paths).
+  const flushImmediate = useCallback(
+    (updates: T[]) => {
       clearTimers();
-
-      const updatesToFlush = [...currentUpdates];
+      pendingRef.current = [];
+      setPendingUpdates([]);
       setTimeUntilFlush(0);
-
-      // Call the flush callback
-      opts.onFlush<T>(updatesToFlush, updatesToFlush.length);
-      onBatchFlushRef.current(updatesToFlush);
-
-      isFirstUpdateRef.current = true;
       hasPendingUpdatesRef.current = false;
 
-      return [];
-    });
-  }, [opts, clearTimers]);
+      optsRef.current.onFlush<T>(updates, updates.length);
+      onBatchFlushRef.current(updates);
+    },
+    [clearTimers]
+  );
 
   // Schedule auto-flush
   const scheduleFlush = useCallback(() => {
@@ -267,50 +285,40 @@ export function useBatchedUpdates<T>(
   // Add update to batch
   const addUpdate = useCallback(
     (update: T) => {
-      setPendingUpdates((prev) => {
-        const newUpdates = opts.reducer<T>(prev, update);
+      const prev = pendingRef.current;
+      const newUpdates = opts.reducer<T>(prev, update);
 
-        // Check if we should flush immediately
-        const shouldFlushOnFirst =
-          opts.flushOnFirst && isFirstUpdateRef.current;
-        const shouldFlushOnSize = newUpdates.length >= opts.maxBatchSize;
-
-        if (shouldFlushOnFirst) {
-          // Flush immediately for first update
-          setTimeout(() => {
-            opts.onFlush<T>([update], 1);
-            onBatchFlush([update]);
-          }, 0);
-          isFirstUpdateRef.current = false;
-          return [];
-        }
-
-        if (shouldFlushOnSize) {
-          // Flush immediately when max batch size reached
-          setTimeout(() => {
-            opts.onFlush<T>(newUpdates, newUpdates.length);
-            onBatchFlush(newUpdates);
-          }, 0);
-          isFirstUpdateRef.current = true;
-          return [];
-        }
-
-        // Schedule auto-flush if this is the first update in the batch
-        if (prev.length === 0) {
-          hasPendingUpdatesRef.current = true;
-          scheduleFlush();
-        }
-
+      // Flush immediately on the very first update when configured.
+      if (opts.flushOnFirst && isFirstUpdateRef.current) {
         isFirstUpdateRef.current = false;
-        return newUpdates;
-      });
+        flushImmediate([update]);
+        return;
+      }
+
+      // Flush immediately once the batch reaches its max size.
+      if (newUpdates.length >= opts.maxBatchSize) {
+        isFirstUpdateRef.current = true;
+        flushImmediate(newUpdates);
+        return;
+      }
+
+      // Otherwise accumulate and arm the auto-flush on the first item in a batch.
+      if (prev.length === 0) {
+        hasPendingUpdatesRef.current = true;
+        scheduleFlush();
+      }
+
+      isFirstUpdateRef.current = false;
+      pendingRef.current = newUpdates;
+      setPendingUpdates(newUpdates);
     },
-    [onBatchFlush, opts, scheduleFlush]
+    [opts, scheduleFlush, flushImmediate]
   );
 
   // Clear all pending updates without flushing
   const clear = useCallback(() => {
     clearTimers();
+    pendingRef.current = [];
     setPendingUpdates([]);
     setTimeUntilFlush(0);
     isFirstUpdateRef.current = true;
@@ -324,22 +332,15 @@ export function useBatchedUpdates<T>(
     };
   }, [clearTimers]);
 
-  // Auto-flush on unmount if there are pending updates
-  const pendingUpdatesRef = useRef<T[]>([]);
-  useEffect(() => {
-    pendingUpdatesRef.current = pendingUpdates;
-  }, [pendingUpdates]);
-
-  // Auto-flush on unmount - intentionally empty deps to only run on unmount
+  // Auto-flush any remaining updates on unmount.
   useEffect(() => {
     return () => {
-      if (pendingUpdatesRef.current.length > 0) {
-        optsRef.current.onFlush<T>(
-          pendingUpdatesRef.current,
-          pendingUpdatesRef.current.length
-        );
-        onBatchFlushRef.current(pendingUpdatesRef.current);
+      if (pendingRef.current.length > 0) {
+        const remaining = pendingRef.current;
+        pendingRef.current = [];
         hasPendingUpdatesRef.current = false;
+        optsRef.current.onFlush<T>(remaining, remaining.length);
+        onBatchFlushRef.current(remaining);
       }
     };
   }, []);

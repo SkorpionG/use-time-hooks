@@ -148,7 +148,7 @@ function DelayedMessage() {
 - `start: () => void` - Start the timeout
 - `pause: () => void` - Pause the timeout (preserves remaining time)
 - `reset: () => void` - Reset to initial delay
-- `clear: () => void` - Clear the timeout (alias for reset)
+- `clear: () => void` - Cancel the timeout and reset to the initial delay, leaving it stopped (unlike `reset`, it never restarts)
 - `toggle: () => void` - Toggle between running and paused
 - `isRunning: boolean` - Current running state
 - `timeRemaining: number` - Milliseconds remaining until execution

@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useTimeout } from '../src/useTimeout';
+import { useTimeout } from '../src/useTimeout.js';
 
 describe('useTimeout', () => {
   it('should execute callback after specified delay', () => {
@@ -137,8 +137,16 @@ describe('useTimeout', () => {
 
     // The timeout should be cleared and state reset
     expect(result.current.timeRemaining).toBe(delay);
+    expect(result.current.timeElapsed).toBe(0);
+    expect(result.current.isRunning).toBe(false);
 
     // Callback should not be called after clearing
+    expect(callback.mock.calls.length).toBe(callCountBeforeClear);
+
+    act(() => {
+      vi.advanceTimersByTime(delay);
+    });
+
     expect(callback.mock.calls.length).toBe(callCountBeforeClear);
   });
 

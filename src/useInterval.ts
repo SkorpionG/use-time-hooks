@@ -49,6 +49,10 @@ export function useInterval(
 ): UseIntervalReturn {
   const savedCallback = useRef<(() => void) | undefined>(undefined);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  // Set when a run should fire the callback immediately, consumed once by the
+  // interval effect. Kept in a ref so the effect does not depend on execution
+  // count (which would tear down and recreate the interval on every tick).
+  const fireImmediateRef = useRef(false);
   const [isRunning, setIsRunning] = useState(false);
   const [executionCount, setExecutionCount] = useState(0);
 
@@ -60,9 +64,12 @@ export function useInterval(
   // Start function
   const start = useCallback(() => {
     if (!isRunning && intervalIdRef.current === null) {
+      if (immediate) {
+        fireImmediateRef.current = true;
+      }
       setIsRunning(true);
     }
-  }, [isRunning]);
+  }, [isRunning, immediate]);
 
   // Stop function
   const stop = useCallback(() => {
@@ -92,8 +99,11 @@ export function useInterval(
     }
   }, [isRunning, start, stop]);
 
-  // Set up the interval
+  // Set up the interval. Depends only on delay/isRunning so a single interval
+  // runs for the whole session instead of being recreated after each tick.
   useEffect(() => {
+    if (!isRunning) return;
+
     function tick() {
       if (savedCallback.current) {
         savedCallback.current();
@@ -101,31 +111,23 @@ export function useInterval(
       }
     }
 
-    if (isRunning) {
-      // Execute immediately if requested
-      if (immediate && executionCount === 0) {
-        tick();
-      }
-
-      intervalIdRef.current = setInterval(tick, delay);
-
-      return () => {
-        if (intervalIdRef.current !== null) {
-          clearInterval(intervalIdRef.current);
-          intervalIdRef.current = null;
-        }
-      };
+    // Execute immediately once if this run requested it.
+    if (fireImmediateRef.current) {
+      fireImmediateRef.current = false;
+      tick();
     }
-  }, [delay, immediate, isRunning, executionCount]);
 
-  // Cleanup on unmount
-  useEffect(() => {
+    intervalIdRef.current = setInterval(tick, delay);
+
     return () => {
       if (intervalIdRef.current !== null) {
         clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
       }
     };
-  }, []);
+  }, [delay, isRunning]);
+  // Note: the interval effect above owns cleanup; unmounting while running runs
+  // its cleanup, so no separate unmount effect is needed.
 
   return { start, stop, reset, toggle, isRunning, executionCount };
 }

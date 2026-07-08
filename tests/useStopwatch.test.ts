@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useStopwatch } from '../src/useStopwatch';
+import { useStopwatch } from '../src/useStopwatch.js';
 
 describe('useStopwatch', () => {
   it('should initialize with correct default values', () => {
@@ -71,6 +71,18 @@ describe('useStopwatch', () => {
 
     expect(result.current.elapsedTime).toBeGreaterThan(900);
     expect(result.current.elapsedTime).toBeLessThan(1100);
+
+    // Stop between precision ticks (last tick was at 1100ms): elapsedTime must
+    // snap to the exact stop moment rather than lag behind at the last tick.
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
+
+    act(() => {
+      result.current.stop();
+    });
+
+    expect(result.current.elapsedTime).toBe(1150);
   });
 
   it('should reset to initial state', () => {
@@ -85,13 +97,9 @@ describe('useStopwatch', () => {
       vi.advanceTimersByTime(1000);
     });
 
-    act(() => {
-      result.current.stop();
-    });
-
     expect(result.current.elapsedTime).toBeGreaterThan(0);
 
-    // Reset
+    // Reset while still running - must clear the live interval and zero everything
     act(() => {
       result.current.reset();
     });
@@ -100,6 +108,13 @@ describe('useStopwatch', () => {
     expect(result.current.elapsedTime).toBe(0);
     expect(result.current.lapTimes).toEqual([]);
     expect(result.current.formattedTime).toBe('00:00.00');
+
+    // No stray interval keeps ticking after a reset-while-running
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+
+    expect(result.current.elapsedTime).toBe(0);
   });
 
   it('should preserve elapsed time when stopped and restarted', () => {
@@ -237,6 +252,21 @@ describe('useStopwatch', () => {
     expect(result.current.formattedTime).toMatch(/01:10\.\d{2}/);
   });
 
+  it('should format time with hours once elapsed exceeds an hour', () => {
+    const { result } = renderHook(() => useStopwatch(1000));
+
+    act(() => {
+      result.current.start();
+    });
+
+    // 1 hour, 1 minute, 1 second
+    act(() => {
+      vi.advanceTimersByTime(3661000);
+    });
+
+    expect(result.current.formattedTime).toMatch(/^01:01:01\.\d{2}$/);
+  });
+
   it('should handle different precision values', () => {
     const { result: result10ms } = renderHook(() => useStopwatch(10));
     const { result: result100ms } = renderHook(() => useStopwatch(100));
@@ -320,8 +350,8 @@ describe('useStopwatch', () => {
       lap1 = result.current.lap();
     });
 
-    expect(lap1.splitTime).toBeGreaterThan(900);
-    expect(lap1.splitTime).toBeLessThan(1100);
+    expect(lap1!.splitTime).toBeGreaterThan(900);
+    expect(lap1!.splitTime).toBeLessThan(1100);
 
     // Second lap at 1.5 seconds total (0.5 second split)
     act(() => {
@@ -333,10 +363,10 @@ describe('useStopwatch', () => {
       lap2 = result.current.lap();
     });
 
-    expect(lap2.splitTime).toBeGreaterThan(400);
-    expect(lap2.splitTime).toBeLessThan(600);
-    expect(lap2.totalTime).toBeGreaterThan(1400);
-    expect(lap2.totalTime).toBeLessThan(1600);
+    expect(lap2!.splitTime).toBeGreaterThan(400);
+    expect(lap2!.splitTime).toBeLessThan(600);
+    expect(lap2!.totalTime).toBeGreaterThan(1400);
+    expect(lap2!.totalTime).toBeLessThan(1600);
   });
 
   it('should reset lap reference when clearing laps', () => {
@@ -367,6 +397,6 @@ describe('useStopwatch', () => {
       newLap = result.current.lap();
     });
 
-    expect(newLap.splitTime).toBeGreaterThan(1400); // Should be total time since start
+    expect(newLap!.splitTime).toBeGreaterThan(1400); // Should be total time since start
   });
 });

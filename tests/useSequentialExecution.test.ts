@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   useSequentialExecution,
   ExecutionStep,
-} from '../src/useSequentialExecution';
+} from '../src/useSequentialExecution.js';
 
 describe('useSequentialExecution', () => {
   it('should throw error with empty steps array', () => {
@@ -26,10 +26,9 @@ describe('useSequentialExecution', () => {
     expect(result.current.currentStep).toEqual(steps[0]);
   });
 
-  it('should auto-start when autoStart is true', () => {
-    const steps: ExecutionStep[] = [
-      { fn: vi.fn(), timeout: 1000, id: 'step1' },
-    ];
+  it('should auto-start when autoStart is true', async () => {
+    const stepFn = vi.fn();
+    const steps: ExecutionStep[] = [{ fn: stepFn, timeout: 1000, id: 'step1' }];
 
     const { result } = renderHook(() =>
       useSequentialExecution(steps, true, true)
@@ -38,6 +37,39 @@ describe('useSequentialExecution', () => {
     // Auto-start should set isRunning to true
     expect(result.current.isRunning).toBe(true);
     expect(result.current.currentStepIndex).toBe(0);
+
+    // ...and actually schedule and execute the first step.
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+
+    expect(stepFn).toHaveBeenCalledTimes(1);
+  });
+
+  it('should loop back to the first step when loop is true', async () => {
+    const mockFn1 = vi.fn();
+    const mockFn2 = vi.fn();
+
+    const steps: ExecutionStep[] = [
+      { fn: mockFn1, timeout: 100, id: 'step1' },
+      { fn: mockFn2, timeout: 100, id: 'step2' },
+    ];
+
+    const { result } = renderHook(() => useSequentialExecution(steps, true));
+
+    act(() => {
+      result.current.start();
+    });
+
+    // Run through two full cycles (step1 -> step2 -> step1 -> step2)
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(400);
+    });
+
+    expect(mockFn1).toHaveBeenCalledTimes(2);
+    expect(mockFn2).toHaveBeenCalledTimes(2);
+    expect(result.current.cyclesCompleted).toBe(2);
+    expect(result.current.isRunning).toBe(true);
   });
 
   it('should start and stop execution correctly', () => {
@@ -166,6 +198,20 @@ describe('useSequentialExecution', () => {
     expect(mockFn2).toHaveBeenCalledTimes(1);
     expect(result.current.isRunning).toBe(false); // Should stop
     expect(result.current.cyclesCompleted).toBe(1);
+
+    // After a non-looping sequence finishes, start() must be able to run it
+    // again (previously blocked by the completed step's stale timeout ref).
+    act(() => {
+      result.current.start();
+    });
+
+    expect(result.current.isRunning).toBe(true);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(100);
+    });
+
+    expect(mockFn1).toHaveBeenCalledTimes(2);
   });
 
   it('should reset to initial state', () => {

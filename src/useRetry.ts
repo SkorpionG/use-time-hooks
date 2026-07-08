@@ -149,6 +149,9 @@ export function useRetry<T>(
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const cancelledRef = useRef<boolean>(false);
+  // Reject handler for the promise that is currently waiting out a retry delay,
+  // so cancel()/reset() can settle it instead of leaving execute() hanging.
+  const pendingRejectRef = useRef<((reason?: unknown) => void) | null>(null);
 
   const [state, setState] = useState<RetryState>({
     isRetrying: false,
@@ -256,7 +259,11 @@ export function useRetry<T>(
 
           // Wait for delay, then retry
           return new Promise<T>((resolve, reject) => {
+            // Track this reject so cancel()/reset() can settle the promise
+            // rather than leaving the awaited execute() call hanging forever.
+            pendingRejectRef.current = reject;
             timeoutRef.current = setTimeout(() => {
+              pendingRejectRef.current = null;
               attemptOperation(attemptNumber + 1)
                 .then(resolve)
                 .catch(reject);
@@ -282,6 +289,14 @@ export function useRetry<T>(
     if (countdownRef.current) {
       clearTimeout(countdownRef.current);
       countdownRef.current = null;
+    }
+
+    // Settle any execute() call currently waiting out a retry delay so it does
+    // not hang; the awaiting caller sees a rejection instead.
+    if (pendingRejectRef.current) {
+      const reject = pendingRejectRef.current;
+      pendingRejectRef.current = null;
+      reject(new Error('Operation cancelled'));
     }
 
     setState((prev) => ({

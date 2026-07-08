@@ -44,7 +44,7 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
   }, []);
 
   return useCallback(
-    ((...args: Parameters<T>) => {
+    (...args: Parameters<T>) => {
       const now = Date.now();
 
       if (now - lastRun.current >= delay) {
@@ -59,11 +59,12 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
           () => {
             callback(...args);
             lastRun.current = Date.now();
+            timeoutRef.current = null;
           },
           delay - (now - lastRun.current)
         );
       }
-    }) as T,
+    },
     [callback, delay]
-  );
+  ) as unknown as T;
 }

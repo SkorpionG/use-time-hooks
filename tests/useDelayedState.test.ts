@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useDelayedState } from '../src/useDelayedState';
+import { useDelayedState } from '../src/useDelayedState.js';
 
 describe('useDelayedState', () => {
   it('should initialize with correct default values', () => {
@@ -41,7 +41,7 @@ describe('useDelayedState', () => {
     const { result } = renderHook(() => useDelayedState(10, 1000));
 
     act(() => {
-      result.current.setValue((prev) => prev + 5);
+      result.current.setValue((prev: number) => prev + 5);
     });
 
     expect(result.current.immediateValue).toBe(15);
@@ -258,7 +258,7 @@ describe('useDelayedState', () => {
     const { result } = renderHook(() => useDelayedState(10, 1000));
 
     act(() => {
-      result.current.setImmediate((prev) => prev * 2);
+      result.current.setImmediate((prev: number) => prev * 2);
     });
 
     expect(result.current.value).toBe(20);

@@ -114,7 +114,10 @@ export function useSequentialExecution(
   const startTimeRef = useRef<number>(0);
   const currentTimeoutRef = useRef<number>(0);
 
-  const [isRunning, setIsRunning] = useState(autoStart);
+  // Starts false even when autoStart is true; the auto-start effect below flips
+  // it and schedules the first step. Initializing to `autoStart` here would make
+  // the effect's `!isRunningRef.current` guard skip scheduling entirely.
+  const [isRunning, setIsRunning] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [cyclesCompleted, setCyclesCompleted] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -149,55 +152,60 @@ export function useSequentialExecution(
   }, [steps, loop]);
 
   // Execute step and schedule next - stable function using refs
-  const executeAndScheduleNext = useCallback(async (stepIndex: number) => {
-    const currentSteps = stepsRef.current;
-    const step = currentSteps[stepIndex];
-    if (!step) return;
+  const executeAndScheduleNext = useCallback(
+    async function executeAndScheduleNext(stepIndex: number) {
+      const currentSteps = stepsRef.current;
+      const step = currentSteps[stepIndex];
+      if (!step) return;
 
-    try {
-      await step.fn();
-    } catch (error) {
-      console.error(`Error executing step ${stepIndex}:`, error);
-    }
+      try {
+        await step.fn();
+      } catch (error) {
+        console.error(`Error executing step ${stepIndex}:`, error);
+      }
 
-    // Move to next step or complete cycle
-    const nextIndex = stepIndex + 1;
-    if (nextIndex >= currentSteps.length) {
-      // Completed a full cycle
-      setCyclesCompleted((prev) => prev + 1);
+      // Move to next step or complete cycle
+      const nextIndex = stepIndex + 1;
+      if (nextIndex >= currentSteps.length) {
+        // Completed a full cycle
+        setCyclesCompleted((prev) => prev + 1);
 
-      if (loopRef.current) {
-        setCurrentStepIndex(0);
-        // Schedule first step again
-        const firstStep = currentSteps[0];
-        if (firstStep) {
-          startTimeRef.current = Date.now();
-          currentTimeoutRef.current = firstStep.timeout;
-          setTimeRemaining(firstStep.timeout);
-          timeoutRef.current = setTimeout(() => {
-            void executeAndScheduleNext(0);
-          }, firstStep.timeout);
+        if (loopRef.current) {
+          setCurrentStepIndex(0);
+          // Schedule first step again
+          const firstStep = currentSteps[0];
+          if (firstStep) {
+            startTimeRef.current = Date.now();
+            currentTimeoutRef.current = firstStep.timeout;
+            setTimeRemaining(firstStep.timeout);
+            timeoutRef.current = setTimeout(() => {
+              void executeAndScheduleNext(0);
+            }, firstStep.timeout);
+          }
+        } else {
+          // Stop execution if not looping. Clear the (already-fired) timeout ref
+          // so a later start()/toggle() is not blocked by its stale, non-null id.
+          timeoutRef.current = null;
+          setIsRunning(false);
+          setTimeRemaining(0);
+          return;
         }
       } else {
-        // Stop execution if not looping
-        setIsRunning(false);
-        setTimeRemaining(0);
-        return;
+        setCurrentStepIndex(nextIndex);
+        // Schedule next step
+        const nextStep = currentSteps[nextIndex];
+        if (nextStep) {
+          startTimeRef.current = Date.now();
+          currentTimeoutRef.current = nextStep.timeout;
+          setTimeRemaining(nextStep.timeout);
+          timeoutRef.current = setTimeout(() => {
+            void executeAndScheduleNext(nextIndex);
+          }, nextStep.timeout);
+        }
       }
-    } else {
-      setCurrentStepIndex(nextIndex);
-      // Schedule next step
-      const nextStep = currentSteps[nextIndex];
-      if (nextStep) {
-        startTimeRef.current = Date.now();
-        currentTimeoutRef.current = nextStep.timeout;
-        setTimeRemaining(nextStep.timeout);
-        timeoutRef.current = setTimeout(() => {
-          void executeAndScheduleNext(nextIndex);
-        }, nextStep.timeout);
-      }
-    }
-  }, []);
+    },
+    []
+  );
 
   // Use ref to track running state for start function
   const isRunningRef = useRef(isRunning);

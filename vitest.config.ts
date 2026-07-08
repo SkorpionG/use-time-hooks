@@ -9,6 +9,13 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', 'demos', 'examples'],
     coverage: {
       reporter: ['text', 'json', 'html'],
+      // Floors set just below current levels so coverage can't silently regress.
+      thresholds: {
+        statements: 97,
+        branches: 84,
+        functions: 98,
+        lines: 98,
+      },
       exclude: [
         'node_modules/',
         'tests/',

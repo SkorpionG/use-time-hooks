@@ -49,91 +49,85 @@ export function useTimeout(
   autoStart: boolean = true
 ): UseTimeoutReturn {
   const savedCallback = useRef<(() => void) | undefined>(undefined);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(0);
   const remainingTimeRef = useRef<number>(delay);
 
   const [isRunning, setIsRunning] = useState(autoStart);
   const [timeRemaining, setTimeRemaining] = useState(delay);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  // Bumping this forces the timer effect to (re)start even while already running.
+  const [restartNonce, setRestartNonce] = useState(0);
 
   // Remember the latest callback
   useEffect(() => {
     savedCallback.current = callback;
   }, [callback]);
 
-  // Update time remaining every 100ms when running
+  // Declaratively run the timeout + countdown whenever the timer is active.
+  // Driving the timer from `isRunning`/`restartNonce` state (rather than calling
+  // an imperative start() inside an effect) avoids synchronous setState-in-effect
   useEffect(() => {
     if (!isRunning) return;
 
-    const intervalId = setInterval(() => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const remaining = Math.max(0, remainingTimeRef.current - elapsed);
-
-      setTimeRemaining(remaining);
-      setTimeElapsed(delay - remaining);
-
-      if (remaining === 0) {
-        setIsRunning(false);
-      }
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, [isRunning, delay]);
-
-  // Start function
-  const start = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
     startTimeRef.current = Date.now();
-    remainingTimeRef.current = timeRemaining;
+    const duration = remainingTimeRef.current;
 
-    timeoutRef.current = setTimeout(() => {
-      if (savedCallback.current) {
-        savedCallback.current();
-      }
-      setIsRunning(false);
+    const timeoutId = setTimeout(() => {
+      savedCallback.current?.();
+      remainingTimeRef.current = delay;
       setTimeRemaining(0);
       setTimeElapsed(delay);
-    }, remainingTimeRef.current);
+      setIsRunning(false);
+    }, duration);
 
+    const intervalId = setInterval(() => {
+      const remaining = Math.max(
+        0,
+        duration - (Date.now() - startTimeRef.current)
+      );
+      setTimeRemaining(remaining);
+      setTimeElapsed(delay - remaining);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      clearInterval(intervalId);
+    };
+  }, [isRunning, restartNonce, delay]);
+
+  // Start (or resume) the timeout using whatever time is currently remaining.
+  const start = useCallback(() => {
     setIsRunning(true);
-  }, [timeRemaining, delay]);
+    setRestartNonce((n) => n + 1);
+  }, []);
 
-  // Pause function
+  // Pause, preserving the remaining time so start() can resume from it.
   const pause = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    const elapsed = Date.now() - startTimeRef.current;
-    remainingTimeRef.current = Math.max(0, remainingTimeRef.current - elapsed);
-
+    remainingTimeRef.current = Math.max(
+      0,
+      remainingTimeRef.current - (Date.now() - startTimeRef.current)
+    );
     setTimeRemaining(remainingTimeRef.current);
     setTimeElapsed(delay - remainingTimeRef.current);
     setIsRunning(false);
   }, [delay]);
 
-  // Reset function
+  // Reset back to the full delay; keeps running when autoStart is enabled.
   const reset = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
+    remainingTimeRef.current = delay;
+    setTimeRemaining(delay);
+    setTimeElapsed(0);
+    setIsRunning(autoStart);
+    setRestartNonce((n) => n + 1);
+  }, [delay, autoStart]);
 
+  // Clear the timeout and reset display state without restarting.
+  const clear = useCallback(() => {
     remainingTimeRef.current = delay;
     setTimeRemaining(delay);
     setTimeElapsed(0);
     setIsRunning(false);
   }, [delay]);
-
-  // Clear function (alias for reset)
-  const clear = useCallback(() => {
-    reset();
-  }, [reset]);
 
   // Toggle function
   const toggle = useCallback(() => {
@@ -143,19 +137,6 @@ export function useTimeout(
       start();
     }
   }, [isRunning, pause, start]);
-
-  // Auto-start on mount if enabled
-  useEffect(() => {
-    if (autoStart) {
-      start();
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [autoStart, start]);
 
   return {
     start,

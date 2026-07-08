@@ -160,6 +160,9 @@ export function useStopwatch(precision: number = 10): UseStopwatchReturn {
       const elapsed = now - startTimeRef.current + pausedTimeRef.current;
       pausedTimeRef.current = elapsed;
 
+      // Sync the displayed time to the exact stop moment; otherwise it lags the
+      // true value by up to one `precision` interval and disagrees with state.
+      setElapsedTime(elapsed);
       setIsRunning(false);
     }
   }, [isRunning]);
@@ -218,15 +221,8 @@ export function useStopwatch(precision: number = 10): UseStopwatchReturn {
     setLapTimes([]);
     lastLapTimeRef.current = 0;
   }, []);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
+  // Note: the elapsed-time effect above owns interval cleanup; unmounting while
+  // running runs its cleanup, so no separate unmount effect is needed.
 
   const formattedTime = formatTime(elapsedTime);
 

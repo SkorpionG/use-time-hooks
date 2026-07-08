@@ -138,18 +138,21 @@ export function useDelayedState<T>(
   }, [isPending]);
 
   // Update countdown timer - stable function using refs
-  const updateCountdown = useCallback(() => {
-    if (!isPendingRef.current) return;
+  const updateCountdown = useCallback(
+    function updateCountdown() {
+      if (!isPendingRef.current) return;
 
-    const elapsed = Date.now() - startTimeRef.current;
-    const remaining = Math.max(0, delay - elapsed);
+      const elapsed = Date.now() - startTimeRef.current;
+      const remaining = Math.max(0, delay - elapsed);
 
-    setTimeRemaining(remaining);
+      setTimeRemaining(remaining);
 
-    if (remaining > 0) {
-      countdownRef.current = setTimeout(updateCountdown, 100);
-    }
-  }, [delay]);
+      if (remaining > 0) {
+        countdownRef.current = setTimeout(updateCountdown, 100);
+      }
+    },
+    [delay]
+  );
 
   // Start countdown
   const startCountdown = useCallback(() => {
@@ -253,12 +256,10 @@ export function useDelayedState<T>(
     };
   }, [clearTimers]);
 
-  // Sync immediate value with delayed value when not pending
-  useEffect(() => {
-    if (!isPending && immediateValue !== value) {
-      setImmediateValue(value);
-    }
-  }, [value, isPending, immediateValue]);
+  // Sync immediate value with delayed value when not pending (Derived State)
+  if (!isPending && immediateValue !== value) {
+    setImmediateValue(value);
+  }
 
   return {
     value,

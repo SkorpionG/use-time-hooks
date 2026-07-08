@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useThrottle } from '../src/useThrottle';
+import { useThrottle } from '../src/useThrottle.js';
 
 describe('useThrottle', () => {
   it('should execute callback immediately on first call', () => {

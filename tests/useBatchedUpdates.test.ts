@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useBatchedUpdates } from '../src/useBatchedUpdates';
+import { useBatchedUpdates } from '../src/useBatchedUpdates.js';
 
 describe('useBatchedUpdates', () => {
   it('should initialize with correct default values', () => {
@@ -71,12 +71,17 @@ describe('useBatchedUpdates', () => {
       result.current.addUpdate('update3');
     });
 
-    // Wait for setTimeout(0) to complete
+    // A size-triggered flush must also cancel the pending auto-flush countdown
+    // armed by the first update, so no stale timer keeps ticking afterwards.
+    expect(result.current.timeUntilFlush).toBe(0);
+
+    // Wait for any timers to complete
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
     expect(mockFlush).toHaveBeenCalledWith(['update1', 'update2', 'update3']);
+    expect(mockFlush).toHaveBeenCalledTimes(1);
     expect(result.current.pendingUpdates).toEqual([]);
   });
 

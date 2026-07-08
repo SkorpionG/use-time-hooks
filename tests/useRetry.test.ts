@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { useRetry } from '../src/useRetry';
+import { useRetry } from '../src/useRetry.js';
 
 describe('useRetry', () => {
   it('should initialize with correct default state', () => {
@@ -76,7 +76,7 @@ describe('useRetry', () => {
 
     let caughtError;
     await act(async () => {
-      const promise = result.current.execute().catch((e) => {
+      const promise = result.current.execute().catch((e: Error) => {
         caughtError = e;
         return e; // Return instead of throwing to prevent unhandled rejection
       });
@@ -97,7 +97,7 @@ describe('useRetry', () => {
     expect(result.current.state.lastError).toBe(error);
   });
 
-  it('should cancel ongoing retry operation', async () => {
+  it('should cancel ongoing retry operation and settle the pending promise', async () => {
     const mockOperation = vi.fn().mockRejectedValue(new Error('Failure'));
 
     const { result } = renderHook(() =>
@@ -107,16 +107,35 @@ describe('useRetry', () => {
       })
     );
 
+    let settled = false;
+    let rejection: unknown;
+    let promise!: Promise<unknown>;
     await act(async () => {
-      // Execute and catch the rejection to prevent unhandled error
-      result.current.execute().catch(() => {});
+      // First attempt fails, then the hook waits out the initialDelay before retrying.
+      promise = result.current.execute();
+      promise.then(
+        () => {
+          settled = true;
+        },
+        (error) => {
+          settled = true;
+          rejection = error;
+        }
+      );
     });
 
-    // Cancel before first retry completes
+    // Cancel before the first retry completes
     act(() => {
       result.current.cancel();
     });
 
+    // The awaited execute() promise must settle (reject) rather than hang forever.
+    await act(async () => {
+      await promise.catch(() => {});
+    });
+
+    expect(settled).toBe(true);
+    expect(rejection).toBeInstanceOf(Error);
     expect(result.current.state.isRetrying).toBe(false);
     expect(result.current.state.timeUntilNextRetry).toBe(0);
   });
@@ -160,6 +179,33 @@ describe('useRetry', () => {
     });
 
     expect(mockOperation).toHaveBeenCalledWith('arg1', 'arg2', 123);
+  });
+
+  it('should use a constant delay when exponential backoff is disabled', async () => {
+    const mockOperation = vi.fn().mockRejectedValue(new Error('fail'));
+    const onRetry = vi.fn();
+
+    const { result } = renderHook(() =>
+      useRetry(mockOperation, {
+        maxAttempts: 2,
+        initialDelay: 100,
+        useExponentialBackoff: false,
+        onRetry,
+      })
+    );
+
+    await act(async () => {
+      const promise = result.current.execute().catch(() => {});
+      // Constant delay: each retry waits exactly initialDelay, not 100 then 200
+      await vi.advanceTimersByTimeAsync(100);
+      await vi.advanceTimersByTimeAsync(100);
+      await promise;
+    });
+
+    expect(mockOperation).toHaveBeenCalledTimes(3); // initial + 2 retries
+    expect(onRetry).toHaveBeenCalledTimes(2);
+    expect(onRetry.mock.calls[0][2]).toBe(100);
+    expect(onRetry.mock.calls[1][2]).toBe(100);
   });
 
   it('should cleanup timeouts on unmount', async () => {
